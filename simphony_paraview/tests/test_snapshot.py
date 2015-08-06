@@ -8,9 +8,10 @@ from PIL import Image
 
 
 from simphony_paraview.snapshot import snapshot
+from simphony.cuds import (
+    ABCMesh, ABCParticles, ABCLattice,
+    Mesh, Particles, Point, Particle)
 from simphony.cuds.lattice import make_square_lattice
-from simphony.cuds.mesh import Mesh, Point
-from simphony.cuds.particles import Particles, Particle
 
 
 class TestSnapShot(unittest.TestCase):
