@@ -58,6 +58,11 @@ class TestSnapShot(unittest.TestCase):
         snapshot(particles, filename)
         self.assertImageSavedWithContent(filename)
 
+    def test_snapshot_invalid_cuds(self):
+        filename = self.filename
+        with self.assertRaises(TypeError):
+            snapshot(object(), filename)
+
     def assertImageSavedWithContent(self, filename):
         """ Load the image and check that there is some content in it.
 
