@@ -42,7 +42,7 @@ def mock_modules():
 mock_modules()
 
 # import the release and version value from the module
-from simphony_mayavi._version import full_version, version  # noqa
+from simphony_paraview._version import full_version, version  # noqa
 
 extensions = [
     'sphinx.ext.autodoc',
