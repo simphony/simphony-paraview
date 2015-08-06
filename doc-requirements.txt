@@ -1,0 +1,3 @@
+git+https://github.com/simphony/simphony-common.git@0.2.0#egg=simphony
+git+https://github.com/enthought/sectiondoc.git@8a0c2be#egg=sectiondoc
+mock
