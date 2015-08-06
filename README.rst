@@ -8,8 +8,8 @@ visualization support of the CUDS highlevel components.
   :target: https://travis-ci.org/simphony/simphony-paraview
   :alt: Build status
 
-.. image:: https://coveralls.io/repos/simphony/simphony-paraview/badge.svg?branch=master
-  :target: https://coveralls.io/r/simphony/simphony-paraview?branch=master
+.. image:: http://codecov.io/github/simphony/simphony-paraview/coverage.svg?branch=master
+  :target: http://codecov.io/github/simphony/simphony-paraview?branch=master
   :alt: Test coverage
 
 .. image:: https://readthedocs.org/projects/simphony-paraview/badge/?version=master
