@@ -1,26 +1,25 @@
-import logging
+import warnings
 
 import numpy
 import enum
 from simphony.core.cuba import CUBA
 from simphony.core.keywords import KEYWORDS
 
-logger = logging.getLogger(__name__)
-
 
 def supported_cuba():
     supported = set()
+    message = 'property {} is currently ignored'
     for cuba in CUBA:
         default = default_cuba_value(cuba)
         if isinstance(default, (float, int, long)):
             supported.add(cuba)
         elif isinstance(default, numpy.ndarray):
             if default.ndim > 2:
-                logger.warning('property %s is currently ignored', cuba.name)
+                warnings.warn(message.format(cuba.name))
             else:
                 supported.add(cuba)
         else:
-            logger.warning('property %s is currently ignored', cuba.name)
+            warnings.warn(message.format(cuba.name))
     return supported
 
 
@@ -59,7 +58,7 @@ def default_cuba_value(cuba):
             return -1
         else:
             message = 'property {!r} is currently ignored'
-            logger.warning(message.format(cuba))
+            warnings.warn(message.format(cuba))
     elif description.shape == [3]:
         if numpy.issubdtype(description.dtype, numpy.float):
             return numpy.array(
@@ -68,7 +67,7 @@ def default_cuba_value(cuba):
             return numpy.array([-1, -1, -1], dtype=description.dtype)
         else:
             message = 'property {!r} is currently ignored'
-            logger.warning(message.format(cuba))
+            warnings.warn(message.format(cuba))
     elif description.shape == [3, 3]:
         if numpy.issubdtype(description.dtype, numpy.float):
             return numpy.array([
@@ -81,9 +80,9 @@ def default_cuba_value(cuba):
                 dtype=description.dtype)
         else:
             message = 'property {!r} is currently ignored'
-            logger.warning(message.format(cuba))
+            warnings.warn(message.format(cuba))
     elif description.dtype == numpy.str:
         return " " * description.shape[0]
     else:
         message = 'property {!r} is currently ignored'
-        logger.warning(message.format(cuba))
+        warnings.warn(message.format(cuba))
