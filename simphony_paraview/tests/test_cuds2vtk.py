@@ -111,18 +111,128 @@ class TestCUDS2VTK(unittest.TestCase):
             vtk_to_numpy(arrays['TEMPERATURE']),
             [bond_temperature[int(index)] for index in mass])
 
-    @given(lattice_types)
-    def _test_cuds_lattice(self, lattice):
+    def test_source_from_a_xy_plane_square_lattice(self):
+        # given
+        shape = 2, 4
+        lattice = make_square_lattice(
+            'test', 0.2, (2, 4), origin=(0.2, -2.4, 0.0))
+        self.add_velocity(lattice)
+
         # when
-        vtk_lattice = VTKLattice.from_lattice(lattice)
+        data_set = cuds2vtk(cuds=lattice)
 
         # then
+        self.assertEqual(data_set.GetNumberOfPoints(), numpy.prod(shape))
+        assert_array_equal(data_set.GetOrigin(), (0.2, -2.4, 0.0))
+
+        point_data = data_set.GetPointData()
+        arrays = {
+            point_data.GetArray(index).GetName():
+            vtk_to_numpy(point_data.GetArray(index))
+            for index in range(point_data.GetNumberOfArrays())}
+        for node in lattice.iter_nodes():
+            point_id = data_set.ComputePointId(node.index)
+            assert_array_equal(
+                lattice.get_coordinate(node.index),
+                data_set.GetPoint(point_id))
+            for key, value in node.data.iteritems():
+                assert_array_equal(arrays[key.name][point_id], value)
+
+    def test_source_from_a_xy_plane_rectangular_lattice(self):
+        # given
+        lattice = make_rectangular_lattice(
+            'test', (0.3, 0.35), (13, 23), origin=(0.2, -2.7, 0.0))
+        self.add_velocity(lattice)
+
+        # when
+        data_set = cuds2vtk(cuds=lattice)
+
+        # then
+        self.assertEqual(data_set.GetNumberOfPoints(), 13 * 23)
+        assert_array_equal(data_set.GetOrigin(), (0.2, -2.7, 0.0))
+
+        point_data = data_set.GetPointData()
+        arrays = {
+            point_data.GetArray(index).GetName():
+            vtk_to_numpy(point_data.GetArray(index))
+            for index in range(point_data.GetNumberOfArrays())}
+        for node in lattice.iter_nodes():
+            point_id = data_set.ComputePointId(node.index)
+            assert_array_equal(
+                lattice.get_coordinate(node.index),
+                data_set.GetPoint(point_id))
+            for key, value in node.data.iteritems():
+                assert_array_equal(arrays[key.name][point_id], value)
+
+    def test_source_from_a_cubic_lattice(self):
+        # given
+        lattice = make_cubic_lattice('test', 0.4, (14, 24, 34), (4, 5, 6))
+        self.add_velocity(lattice)
+
+        # when
+        data_set = cuds2vtk(cuds=lattice)
+
+        # then
+        self.assertEqual(data_set.GetNumberOfPoints(), 14 * 24 * 34)
+        assert_array_equal(data_set.GetOrigin(), (4.0, 5.0, 6.0))
+
+        point_data = data_set.GetPointData()
+        arrays = {
+            point_data.GetArray(index).GetName():
+            vtk_to_numpy(point_data.GetArray(index))
+            for index in range(point_data.GetNumberOfArrays())}
+        for node in lattice.iter_nodes():
+            point_id = data_set.ComputePointId(node.index)
+            assert_array_equal(
+                lattice.get_coordinate(node.index),
+                data_set.GetPoint(point_id))
+            for key, value in node.data.iteritems():
+                assert_array_equal(arrays[key.name][point_id], value)
+
+    def test_source_from_an_orthorombic_p_lattice(self):
+        # given
+        lattice = make_orthorombicp_lattice(
+            'test',  (0.5, 0.54, 0.58), (15, 25, 35), (7, 9, 8))
+        self.add_velocity(lattice)
+
+        # when
+        data_set = cuds2vtk(cuds=lattice)
+
+        # then
+        self.assertEqual(data_set.GetNumberOfPoints(), 15 * 25 * 35)
+        assert_array_equal(data_set.GetOrigin(), (7.0, 9.0, 8.0))
+
+        point_data = data_set.GetPointData()
+        arrays = {
+            point_data.GetArray(index).GetName():
+            vtk_to_numpy(point_data.GetArray(index))
+            for index in range(point_data.GetNumberOfArrays())}
+        for node in lattice.iter_nodes():
+            point_id = data_set.ComputePointId(node.index)
+            assert_array_equal(
+                lattice.get_coordinate(node.index),
+                data_set.GetPoint(point_id))
+            for key, value in node.data.iteritems():
+                assert_array_equal(arrays[key.name][point_id], value)
+
+    def test_source_from_a_xy_plane_hexagonal_lattice(self):
+        # given
+        lattice = make_hexagonal_lattice('test', 0.1, (5, 4))
+        self.add_velocity(lattice)
+
+        # when
+        data_set = cuds2vtk(cuds=lattice)
+
+        # then
+        self.assertEqual(data_set.GetNumberOfPoints(), 5 * 4)
         xspace, yspace, _ = lattice.base_vect
-        self.assertEqual(vtk_lattice.type, lattice.type)
-        self.assertEqual(vtk_lattice.data, lattice.data)
-        self.assertEqual(vtk_lattice.size, lattice.size)
-        assert_array_equal(vtk_lattice.origin, lattice.origin)
-        assert_array_equal(vtk_lattice.base_vect, lattice.base_vect)
+
+        points = vtk_to_numpy(data_set.GetPoints().GetData())
+        for node in lattice.iter_nodes():
+            position = lattice.get_coordinate(node.index)
+            point_id = data_set.FindPoint(position)
+            assert_array_equal(
+                points[point_id], numpy.asarray(position, dtype=points.dtype))
 
     def _test_with_cuds_mesh(self):
         # given
@@ -206,6 +316,13 @@ class TestCUDS2VTK(unittest.TestCase):
         # then
         self.assertEqual(data_set.GetNumberOfPoints(), 0)
         self.assertEqual(data_set.GetNumberOfCells(), 0)
+
+    def add_velocity(self, lattice):
+        nodes = [node for node in lattice.iter_nodes()]
+        for node in nodes:
+            node.data[CUBA.VELOCITY] = node.index
+        lattice.update_nodes(nodes)
+
 
 if __name__ == '__main__':
     unittest.main()
