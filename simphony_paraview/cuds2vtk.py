@@ -1,14 +1,15 @@
 from paraview import vtk
 from simphony.cuds import ABCMesh, ABCParticles, ABCLattice
 
-from simphony_paraview.core.api import CUBADataAccumulator
+from simphony_paraview.core.api import (
+    CUBADataAccumulator, points2edge, points2face, points2cell)
 
 
 def cuds2vtk(cuds):
     """ Create a vtk.Dataset from a CUDS container """
 
     if isinstance(cuds, ABCMesh):
-        data_set = vtk.vtkUnstructuredGrid()
+        data_set = _mesh2unstructured_grid(cuds)
     elif isinstance(cuds, ABCParticles):
         data_set = _particles2polydata(cuds)
     elif isinstance(cuds, ABCLattice):
@@ -77,3 +78,49 @@ def _lattice2PolyData(cuds):
 
     polydata.SetPoints(points)
     return polydata
+
+def _mesh2unstructured_grid(cuds):
+    point2index = {}
+    unstructured_grid = vtk.vtkUnstructuredGrid()
+    unstructured_grid.Allocate()
+
+    points = vtk.vtkPoints()
+    point_data = unstructured_grid.GetPointData()
+    data_collector = CUBADataAccumulator(container=point_data)
+    for index, point in enumerate(cuds.iter_points()):
+        point2index[point.uid] = index
+        points.InsertNextPoint(*point.coordinates)
+        data_collector.append(point.data)
+
+    cell_data = unstructured_grid.GetCellData()
+    data_collector = CUBADataAccumulator(container=cell_data)
+
+    mapping = points2edge()
+    for edge in cuds.iter_edges():
+        npoints = len(edge.points)
+        ids = vtk.vtkIdList()
+        for uid in edge.points:
+            ids.InsertNextId(point2index[uid])
+        unstructured_grid.InsertNextCell(mapping[npoints], ids)
+        data_collector.append(edge.data)
+
+    mapping = points2face()
+    for face in cuds.iter_faces():
+        npoints = len(face.points)
+        ids = vtk.vtkIdList()
+        for uid in face.points:
+            ids.InsertNextId(point2index[uid])
+        unstructured_grid.InsertNextCell(mapping[npoints], ids)
+        data_collector.append(face.data)
+
+    mapping = points2cell()
+    for cell in cuds.iter_cells():
+        npoints = len(cell.points)
+        ids = vtk.vtkIdList()
+        for uid in cell.points:
+            ids.InsertNextId(point2index[uid])
+        unstructured_grid.InsertNextCell(mapping[npoints], ids)
+        data_collector.append(cell.data)
+
+    unstructured_grid.SetPoints(points)
+    return unstructured_grid
