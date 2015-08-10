@@ -11,7 +11,7 @@ from paraview import vtk
 from simphony.core.data_container import DataContainer
 from simphony.core.cuba import CUBA
 from simphony.cuds import (
-    Particle, Bond, Particles, LatticeNode, Mesh, Point)
+    Particle, Bond, Particles, LatticeNode, Mesh, Point, Edge, Cell, Face)
 from simphony.cuds.lattice import (
     make_hexagonal_lattice, make_cubic_lattice, make_square_lattice,
     make_rectangular_lattice, make_orthorombicp_lattice)
@@ -19,7 +19,9 @@ from simphony.testing.utils import (
     compare_data_containers, compare_particles, compare_bonds, compare_points)
 
 from simphony_paraview.cuds2vtk import cuds2vtk
-from simphony_paraview.core.api import iter_cells
+from simphony_paraview.core.api import (
+    iter_cells, iter_grid_cells, points2edge, points2face, points2cell)
+
 
 lattice_types = sampled_from([
     make_square_lattice('test', 0.1, (3, 6)),
@@ -99,6 +101,7 @@ class TestCUDS2VTK(unittest.TestCase):
             data_set.GetPoint(index) for index in line]
             for line in iter_cells(vtk_lines)]
         self.assertItemsEqual(lines, links)
+
         cell_data = data_set.GetCellData()
         self.assertEqual(cell_data.GetNumberOfArrays(), 2)
         arrays = {
@@ -234,7 +237,7 @@ class TestCUDS2VTK(unittest.TestCase):
             assert_array_equal(
                 points[point_id], numpy.asarray(position, dtype=points.dtype))
 
-    def _test_with_cuds_mesh(self):
+    def test_with_cuds_mesh(self):
         # given
         points = numpy.array([
             [0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1],
@@ -249,51 +252,79 @@ class TestCUDS2VTK(unittest.TestCase):
         count = itertools.count()
         points = [
             Point(coordinates=point, data=DataContainer(TEMPERATURE=index))
-            for index, point in enumerate(self.points)]
+            for index, point in enumerate(points)]
 
-        container = Mesh('test')
-        for point in points:
-            container.add_point(point)
+        cuds = Mesh('test')
+        cuds.add_points(points)
 
         faces = [
             Face(
                 points=[points[index].uid for index in face],
                 data=DataContainer(TEMPERATURE=next(count)))
-            for face in self.faces]
+            for face in faces]
         edges = [
             Edge(
                 points=[points[index].uid for index in edge],
                 data=DataContainer(TEMPERATURE=next(count)))
-            for edge in self.edges]
+            for edge in edges]
         cells = [
             Cell(
                 points=[points[index].uid for index in cell],
                 data=DataContainer(TEMPERATURE=next(count)))
-            for cell in self.cells]
-        for edge in edges:
-            container.add_edge(edge)
-        for face in faces:
-            container.add_face(face)
-        for cell in cells:
-            container.add_cell(cell)
+            for cell in cells]
+        cuds.add_edges(edges)
+        cuds.add_faces(faces)
+        cuds.add_cells(cells)
 
         # when
-        vtk_container = VTKMesh.from_mesh(container)
+        data_set = cuds2vtk(cuds=cuds)
 
-        # then
-        self.assertEqual(vtk_container.name, container.name)
-        self.assertEqual(sum(1 for _ in vtk_container.iter_points()), 12)
-        self.assertEqual(sum(1 for _ in vtk_container.iter_edges()), 2)
-        self.assertEqual(sum(1 for _ in vtk_container.iter_faces()), 1)
-        self.assertEqual(sum(1 for _ in vtk_container.iter_cells()), 2)
-        for point in points:
-            self.assertEqual(vtk_container.get_point(point.uid), point)
-        for edge in edges:
-            self.assertEqual(vtk_container.get_edge(edge.uid), edge)
-        for face in faces:
-            self.assertEqual(vtk_container.get_face(face.uid), face)
-        for cell in cells:
-            self.assertEqual(vtk_container.get_cell(cell.uid), cell)
+        # then check points
+        self.assertEqual(data_set.GetNumberOfPoints(), 12)
+
+        point_data = data_set.GetPointData()
+        self.assertEqual(point_data.GetNumberOfArrays(), 1)
+        temperature = point_data.GetArray(0)
+        self.assertEqual(temperature.GetName(), 'TEMPERATURE')
+        self.assertItemsEqual(
+            vtk_to_numpy(temperature), range(12))
+
+        # then check cells
+        self.assertEqual(data_set.GetNumberOfCells(), 5)
+
+        links = [[
+            point.coordinates
+            for point in cuds.iter_points(edge.points)]
+            for edge in cuds.iter_edges()]
+        edges = [[
+            data_set.GetPoint(index) for index in line]
+            for line in iter_grid_cells(data_set, points2edge().values())]
+        self.assertItemsEqual(edges, links)
+
+        links = [[
+            point.coordinates
+            for point in cuds.iter_points(face.points)]
+            for face in cuds.iter_faces()]
+        faces = [[
+            data_set.GetPoint(index) for index in line]
+            for line in iter_grid_cells(data_set, points2face().values())]
+        self.assertItemsEqual(faces, links)
+
+        links = [[
+            point.coordinates
+            for point in cuds.iter_points(cell.points)]
+            for cell in cuds.iter_cells()]
+        cells = [[
+            data_set.GetPoint(index) for index in line]
+            for line in iter_grid_cells(data_set, points2cell().values())]
+        self.assertItemsEqual(cells, links)
+
+        cell_data = data_set.GetCellData()
+        self.assertEqual(cell_data.GetNumberOfArrays(), 1)
+        temperature = cell_data.GetArray(0)
+        self.assertEqual(temperature.GetName(), 'TEMPERATURE')
+        self.assertItemsEqual(
+            vtk_to_numpy(temperature), range(5))
 
     def test_with_empty_cuds_mesh(self):
         # given
