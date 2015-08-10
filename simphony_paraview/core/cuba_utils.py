@@ -50,10 +50,6 @@ def default_cuba_value(cuba):
     Int type values have ``-1`` as default, while float type values
     have ``numpy.nan``.
 
-    .. note::
-
-       Only vector and scalar values are currently supported.
-
     """
     description = KEYWORDS[cuba.name]
     if description.shape == [1]:
