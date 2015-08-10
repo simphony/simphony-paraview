@@ -147,10 +147,19 @@ class CUBADataAccumulator(object):
             An array of data values collected for ``key``. Missing values
             are designated with the default value as returned by
             :function:`~.dummy_cuba_value`.
+        Raises
+        ------
+        KeyError :
+            When values for the requested CUBA key do not exist.
 
         """
         container = self.data
-        return container.GetArray(key.name)
+        array = container.GetArray(key.name)
+        if array is None:
+            message = 'Could not find values stored for {}'
+            raise KeyError(message.format(key.name))
+        else:
+            return array
 
     def _expand(self, cubas):
         size = len(self)

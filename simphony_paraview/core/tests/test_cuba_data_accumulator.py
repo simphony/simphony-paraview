@@ -119,3 +119,12 @@ class TestCUBADataAccumulator(unittest.TestCase):
         assert_array_equal(
             vtk_to_numpy(accumulator[CUBA.VELOCITY]),
             [(0.1, 0.2, 0.3)])
+
+    def test_raise_on_invalid_key(self):
+        # given
+        accumulator = CUBADataAccumulator()
+        accumulator.append(DataContainer(VELOCITY=(0.1, 0.2, 0.3)))
+
+        # when then
+        with self.assertRaises(KeyError):
+            accumulator[CUBA.MASS]
