@@ -59,7 +59,7 @@ class TestCUDS2VTK(unittest.TestCase):
                     TEMPERATURE=point_temperature[index],
                     MASS=index))
             for index, point in enumerate(points))
-        bond_uids = cuds.add_bonds(
+        cuds.add_bonds(
             Bond(
                 particles=[particle_uids[uid] for uid in indices],
                 data=DataContainer(
@@ -72,12 +72,14 @@ class TestCUDS2VTK(unittest.TestCase):
 
         # then check points
         self.assertEqual(data_set.GetNumberOfPoints(), 4)
+
         coordinates = [
             particle.coordinates for particle in cuds.iter_particles()]
         vtk_points = [
             data_set.GetPoint(index)
             for index in range(len(particle_uids))]
         self.assertItemsEqual(vtk_points, coordinates)
+
         point_data = data_set.GetPointData()
         self.assertEqual(point_data.GetNumberOfArrays(), 2)
         arrays = {
@@ -92,6 +94,7 @@ class TestCUDS2VTK(unittest.TestCase):
 
         # then check bonds
         self.assertEqual(data_set.GetNumberOfCells(), 3)
+
         links = [[
             particle.coordinates
             for particle in cuds.iter_particles(bond.particles)]

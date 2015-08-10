@@ -1,3 +1,6 @@
+from itertools import izip
+
+import numpy
 from paraview import vtk
 from simphony.cuds import ABCMesh, ABCParticles, ABCLattice
 
@@ -11,40 +14,45 @@ def cuds2vtk(cuds):
     if isinstance(cuds, ABCMesh):
         data_set = _mesh2unstructured_grid(cuds)
     elif isinstance(cuds, ABCParticles):
-        data_set = _particles2polydata(cuds)
+        data_set = _particles2poly_data(cuds)
     elif isinstance(cuds, ABCLattice):
         lattice_type = cuds.type
         if lattice_type in (
                 'Cubic', 'OrthorombicP', 'Square', 'Rectangular'):
-            data_set = _lattice2StructuredPoints(cuds)
+            data_set = _lattice2structured_points(cuds)
         elif lattice_type == 'Hexagonal':
-            data_set = _lattice2PolyData(cuds)
+            data_set = _lattice2poly_data(cuds)
 
     return data_set
 
 
-def _particles2polydata(cuds):
+def _particles2poly_data(cuds):
     particle2index = {}
     points = vtk.vtkPoints()
     lines = vtk.vtkCellArray()
-    polydata = vtk.vtkPolyData()
-    point_data = polydata.GetPointData()
-    cell_data = polydata.GetCellData()
+    poly_data = vtk.vtkPolyData()
+
+    point_data = poly_data.GetPointData()
     data_collector = CUBADataAccumulator(container=point_data)
     for index, particle in enumerate(cuds.iter_particles()):
         particle2index[particle.uid] = index
         points.InsertPoint(index, *particle.coordinates)
         data_collector.append(particle.data)
+
+    cell_data = poly_data.GetCellData()
     data_collector = CUBADataAccumulator(container=cell_data)
     for bond in cuds.iter_bonds():
         lines.InsertNextCell(len(bond.particles))
         for uuid in bond.particles:
             lines.InsertCellPoint(particle2index[uuid])
         data_collector.append(bond.data)
-    polydata.SetPoints(points)
-    polydata.SetLines(lines)
-    return polydata
-def _lattice2StructuredPoints(cuds):
+
+    poly_data.SetPoints(points)
+    poly_data.SetLines(lines)
+    return poly_data
+
+
+def _lattice2structured_points(cuds):
     origin = cuds.origin
     size = cuds.size
     spacing = cuds.base_vect
@@ -65,19 +73,20 @@ def _lattice2StructuredPoints(cuds):
     return structured_points
 
 
-def _lattice2PolyData(cuds):
-    polydata = vtk.vtkPolyData()
+def _lattice2poly_data(cuds):
+    poly_data = vtk.vtkPolyData()
     points = vtk.vtkPoints()
     coordinates = cuds.get_coordinate
 
-    point_data = polydata.GetPointData()
+    point_data = poly_data.GetPointData()
     data_collector = CUBADataAccumulator(container=point_data)
     for node in cuds.iter_nodes():
         points.InsertNextPoint(coordinates(node.index))
         data_collector.append(node.data)
 
-    polydata.SetPoints(points)
-    return polydata
+    poly_data.SetPoints(points)
+    return poly_data
+
 
 def _mesh2unstructured_grid(cuds):
     point2index = {}
