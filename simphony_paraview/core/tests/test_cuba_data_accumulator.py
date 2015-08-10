@@ -105,3 +105,17 @@ class TestCUBADataAccumulator(unittest.TestCase):
         assert_array_equal(
             vtk_to_numpy(accumulator[CUBA.MASS]),
             [dummy_cuba_value(CUBA.MASS), numpy.nan])
+
+    def test_data_conainter_with_tuple_values(self):
+        # given
+        accumulator = CUBADataAccumulator()
+
+        # when
+        accumulator.append(DataContainer(VELOCITY=(0.1, 0.2, 0.3)))
+
+        # then
+        self.assertEqual(len(accumulator), 1)
+        self.assertEqual(accumulator.keys, set([CUBA.VELOCITY]))
+        assert_array_equal(
+            vtk_to_numpy(accumulator[CUBA.VELOCITY]),
+            [(0.1, 0.2, 0.3)])

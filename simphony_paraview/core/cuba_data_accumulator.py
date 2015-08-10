@@ -175,4 +175,5 @@ class CUBADataAccumulator(object):
             if value_type == VALUETYPES.SCALAR:
                 array.InsertNextValue(value)
             elif value_type == VALUETYPES.VECTOR:
-                array.InsertNextTuple(value.ravel())
+                temp = numpy.asarray(value)
+                array.InsertNextTuple(temp.ravel())
