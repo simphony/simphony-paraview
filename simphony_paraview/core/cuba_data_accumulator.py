@@ -6,7 +6,7 @@ from paraview.numpy_support import get_vtk_array_type, create_vtk_array
 from simphony.core.cuba import CUBA
 
 from .cuba_utils import (
-    supported_cuba, cuba_value_types, default_cuba_value, VALUETYPES)
+    supported_cuba, cuba_value_types, default_cuba_value)
 
 
 logger = logging.getLogger(__name__)
