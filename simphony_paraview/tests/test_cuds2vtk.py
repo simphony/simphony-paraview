@@ -6,6 +6,8 @@ import numpy
 from numpy.testing import assert_array_equal
 from hypothesis import given
 from hypothesis.strategies import sampled_from
+from paraview.numpy_support import vtk_to_numpy
+from paraview import vtk
 from simphony.core.data_container import DataContainer
 from simphony.core.cuba import CUBA
 from simphony.cuds import (
@@ -17,6 +19,7 @@ from simphony.testing.utils import (
     compare_data_containers, compare_particles, compare_bonds, compare_points)
 
 from simphony_paraview.cuds2vtk import cuds2vtk
+from simphony_paraview.core.api import iter_cells
 
 lattice_types = sampled_from([
     make_square_lattice('test', 0.1, (3, 6)),
@@ -38,37 +41,75 @@ class TestCUDS2VTK(unittest.TestCase):
         self.addTypeEqualityFunc(
             Bond, partial(compare_bonds, testcase=self))
 
-    def _test_with_cuds_particles(self):
+    def test_with_cuds_particles(self):
         # given
         points = [
             [0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
         bonds = [[0, 1], [0, 3], [1, 3, 2]]
         point_temperature = [10., 20., 30., 40.]
-        bond_temperature = [60., 80., 190., 5.]
+        bond_temperature = [60., 80., 190.]
 
         cuds = Particles('test')
         particle_uids = cuds.add_particles(
             Particle(
                 coordinates=point,
-                data=DataContainer(TEMPERATURE=point_temperature[index]))
+                data=DataContainer(
+                    TEMPERATURE=point_temperature[index],
+                    MASS=index))
             for index, point in enumerate(points))
         bond_uids = cuds.add_bonds(
             Bond(
-                particles=[particle_uids[index] for index in indices],
-                data=DataContainer(TEMPERATURE=bond_temperature[index]))
+                particles=[particle_uids[uid] for uid in indices],
+                data=DataContainer(
+                    TEMPERATURE=bond_temperature[index],
+                    MASS=index))
             for index, indices in enumerate(bonds))
 
         # when
         data_set = cuds2vtk(cuds)
 
-        # then
-        self.assertEqual(data_set.NumberOfPoints, len(particle_uids))
-        for expected in reference.iter_particles():
-            self.assertEqual(container.get_particle(expected.uid), expected)
-        number_of_bonds = sum(1 for _ in container.iter_bonds())
-        self.assertEqual(number_of_bonds, len(bond_uids))
-        for expected in reference.iter_bonds():
-            self.assertEqual(container.get_bond(expected.uid), expected)
+        # then check points
+        self.assertEqual(data_set.GetNumberOfPoints(), 4)
+        coordinates = [
+            particle.coordinates for particle in cuds.iter_particles()]
+        vtk_points = [
+            data_set.GetPoint(index)
+            for index in range(len(particle_uids))]
+        self.assertItemsEqual(vtk_points, coordinates)
+        point_data = data_set.GetPointData()
+        self.assertEqual(point_data.GetNumberOfArrays(), 2)
+        arrays = {
+            point_data.GetArray(index).GetName(): point_data.GetArray(index)
+            for index in range(2)}
+        self.assertItemsEqual(arrays.keys(), ['MASS', 'TEMPERATURE'])
+        mass = vtk_to_numpy(arrays['MASS'])
+        self.assertItemsEqual(mass, range(4))
+        assert_array_equal(
+            vtk_to_numpy(arrays['TEMPERATURE']),
+            [point_temperature[int(index)] for index in mass])
+
+        # then check bonds
+        self.assertEqual(data_set.GetNumberOfCells(), 3)
+        links = [[
+            particle.coordinates
+            for particle in cuds.iter_particles(bond.particles)]
+            for bond in cuds.iter_bonds()]
+        vtk_lines = data_set.GetLines()
+        lines = [[
+            data_set.GetPoint(index) for index in line]
+            for line in iter_cells(vtk_lines)]
+        self.assertItemsEqual(lines, links)
+        cell_data = data_set.GetCellData()
+        self.assertEqual(cell_data.GetNumberOfArrays(), 2)
+        arrays = {
+            cell_data.GetArray(index).GetName(): cell_data.GetArray(index)
+            for index in range(2)}
+        self.assertItemsEqual(arrays.keys(), ['MASS', 'TEMPERATURE'])
+        mass = vtk_to_numpy(arrays['MASS'])
+        self.assertItemsEqual(mass, range(3))
+        assert_array_equal(
+            vtk_to_numpy(arrays['TEMPERATURE']),
+            [bond_temperature[int(index)] for index in mass])
 
     @given(lattice_types)
     def _test_cuds_lattice(self, lattice):

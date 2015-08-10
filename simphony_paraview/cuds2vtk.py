@@ -1,6 +1,7 @@
 from paraview import vtk
-
 from simphony.cuds import ABCMesh, ABCParticles, ABCLattice
+
+from simphony_paraview.core.api import CUBADataAccumulator
 
 
 def cuds2vtk(cuds):
@@ -9,24 +10,31 @@ def cuds2vtk(cuds):
     if isinstance(cuds, ABCMesh):
         data_set = vtk.vtkUnstructuredGrid()
     elif isinstance(cuds, ABCParticles):
-        points = []
-        lines = []
-        particle2index = {}
-        bond2index = {}
-        index2particle = {}
-        index2bond = {}
-        data_set = vtk.vtkPolyData()
-        for index, particle in enumerate(cuds.iter_particles()):
-            uid = particle.uid
-            particle2index[uid] = index
-            index2particle[index] = uid
-            points.append(particle.coordinates)
-        for index, bond in enumerate(cuds.iter_bonds()):
-            uid = bond.uid
-            bond2index[uid] = index
-            index2bond[index] = uid
-            lines.append([particle2index[uuid] for uuid in bond.particles])
+        data_set = _particles2polydata(cuds)
     elif isinstance(cuds, ABCLattice):
         data_set = vtk.vtkImageData()
 
     return data_set
+
+
+def _particles2polydata(cuds):
+    particle2index = {}
+    points = vtk.vtkPoints()
+    lines = vtk.vtkCellArray()
+    polydata = vtk.vtkPolyData()
+    point_data = polydata.GetPointData()
+    cell_data = polydata.GetCellData()
+    data_collector = CUBADataAccumulator(container=point_data)
+    for index, particle in enumerate(cuds.iter_particles()):
+        particle2index[particle.uid] = index
+        points.InsertPoint(index, *particle.coordinates)
+        data_collector.append(particle.data)
+    data_collector = CUBADataAccumulator(container=cell_data)
+    for bond in cuds.iter_bonds():
+        lines.InsertNextCell(len(bond.particles))
+        for uuid in bond.particles:
+            lines.InsertCellPoint(particle2index[uuid])
+        data_collector.append(bond.data)
+    polydata.SetPoints(points)
+    polydata.SetLines(lines)
+    return polydata
