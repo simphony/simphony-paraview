@@ -17,45 +17,44 @@ class CUBADataAccumulator(object):
 
     A collector object that stores :class:``DataContainer`` data into
     a vtkPointData or vtkCellData array containers where each CUBA key
-    is an array.  instanced the user can effectively convert the per
-    item mapping of data values in a CUDS container to a per CUBA key
-    mapping of the data values of a vtk array container.
+    is an array.
 
     The Accumulator has two modes of operation ``fixed`` and
-    ``expand``. ``fixed`` means that data will be stored for
-    a predefined set of keys on every ``append`` call and missing
-    values will be saved as ``None``. Where ``expand`` will extend
-    the internal table of values whenever a new key is introduced.
+    ``expand``. ``fixed`` means that data will be stored for a
+    predefined set of keys on every ``append`` call. Where ``expand``
+    will extend the internal table of values whenever a new key is
+    introduced. Missing values will be stored using
+    :func:`~.default_cuba_value`.
 
     .. rubric:: expand operation
 
     >>> accumulator = CUBADataAccumulator():
     >>> accumulator.append(DataContainer(TEMPERATURE=34))
-    >>> accumulator.keys()
-    {CUBA.TEMPERATURE}
+    >>> accumulator.keys
+    set([<CUBA.TEMPERATURE: 55>])
     >>> accumulator.append(DataContainer(VELOCITY=(0.1, 0.1, 0.1))
     >>> accumulator.append(DataContainer(TEMPERATURE=56))
-    >>> accumulator.keys()
-    {CUBA.TEMPERATURE, CUBA.VELOCITY}
-    >>> accumulator[CUBA.TEMPERATURE]
-    [34, None, 56]
-    >>> accumulator[CUBA.VELOCITY]
-    [None, (0.1, 0.1, 0.1), None]
+    >>> accumulator.keys
+    set([<CUBA.VELOCITY: 21>, <CUBA.TEMPERATURE: 55>])
+    >>> vtk_to_numpy(accumulator[CUBA.TEMPERATURE])
+    array([ 34.,  nan,  56.])
+    >>> vtk_to_numpy(accumulator[CUBA.VELOCITY])
+    array([[ nan,  nan,  nan], [ 0.1,  0.1,  0.1], [ nan,  nan,  nan]])
 
     .. rubric:: fixed operation
 
-    >>> accumulator = CUBADataAccumulator([CUBA.TEMPERATURE, CUBA.PRESSURE]):
-    >>> accumulator.keys()
-    {CUBA.TEMPERATURE, CUBA.PRESSURE}
+    >>> accumulator = CUBADataAccumulator([CUBA.TEMPERATURE, CUBA.PRESSURE])
+    >>> accumulator.keys
+    set([<CUBA.PRESSURE: 54>, <CUBA.TEMPERATURE: 55>])
     >>> accumulator.append(DataContainer(TEMPERATURE=34))
     >>> accumulator.append(DataContainer(VELOCITY=(0.1, 0.1, 0.1))
     >>> accumulator.append(DataContainer(TEMPERATURE=56))
-    >>> accumulator.keys()
-    {CUBA.TEMPERATURE, CUBA.PRESSURE}
-    >>> accumulator[CUBA.TEMPERATURE]
-    [34, None, 56]
-    >>> accumulator[CUBA.PRESSURE]
-    [None, None, None]
+    >>> accumulator.keys
+    set([<CUBA.PRESSURE: 54>, <CUBA.TEMPERATURE: 55>])
+    >>> vtk_to_numpy(accumulator[CUBA.TEMPERATURE])
+    array([ 34.,  nan,  56.])
+    >>> vtk_to_numpy(accumulator[CUBA.PRESSURE])
+    [nan, nan, nan]
     >>> accumulator[CUBA.VELOCITY]
     KeyError(...)
 
@@ -97,27 +96,31 @@ class CUBADataAccumulator(object):
         return set(self._cubas)
 
     def append(self, data):
-        """ Append info from a ``DataContainer``.
+        """Append data from a ``DataContainer``.
+
+        If the accumulator operates in ``fixed`` mode:
+
+        - Any keys in :code:`self.keys()` that have values in ``data``
+          will be stored (appended to the related key arrays).
+        - Missing keys will be stored with the
+          returned value of the :func:`~.default_cuba_value`.
+
+        If the accumulator operates in ``expand`` mode:
+
+        - Any new keys in `Data` will be added to the
+          :code:`self.keys()` list and the related list of values with
+          length equal to the current record size will be initialised
+          with the returned value of the :func:`~.default_cuba_value`.
+        - Any keys in the modified :code:`self.keys()` that have
+          values in ``data`` will be stored (appended to the list of
+          the related key).
+        - Missing keys will be stored with the
+          returned value of the :func:`~.default_cuba_value`.
 
         Parameters
         ----------
         data : DataContainer
             The data information to append.
-
-        If the accumulator operates in ``fixed`` mode:
-
-        - Any keys in :code:`self.keys()` that have values in ``data``
-          will be stored (appended to the related key lits).
-        - Missing keys will be stored as ``None``
-
-        If the accumulator operates in ``expand`` mode:
-
-        - Any new keys in `Data` will be added to the :code:`self.keys()` list
-          and the related list of values with length equal to the current
-          record size will be initialised with values of ``None``.
-        - Any keys in the modified :code:`self.keys()` that have values in
-          ``data`` will be stored (appended to the list of the related key).
-        - Missing keys will be store as ``None``.
 
         """
         if self._expand_mode:
@@ -144,9 +147,11 @@ class CUBADataAccumulator(object):
         Returns
         -------
         result : vtkDataArray
-            An array of data values collected for ``key``. Missing values
-            are designated with the default value as returned by
-            :function:`~.dummy_cuba_value`.
+
+            An array of data values collected for ``key``. Missing
+            values are assigned the default value as returned by
+            :function:`~.default_cuba_value`.
+
         Raises
         ------
         KeyError :
