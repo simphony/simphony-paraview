@@ -85,9 +85,9 @@ def default_cuba_value(cuba):
                 dtype=description.dtype)
         else:
             message = 'property {!r} is currently ignored'
-            warnings.warn(message.format(cuba))
+            logger.warning(message.format(cuba))
     elif description.dtype == numpy.str:
         return " " * description.shape[0]
     else:
         message = 'property {!r} is currently ignored'
-        warnings.warn(message.format(cuba))
+        logger.warning(message.format(cuba))
