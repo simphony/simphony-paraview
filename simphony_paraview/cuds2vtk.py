@@ -78,6 +78,7 @@ def _lattice2poly_data(cuds):
     points = vtk.vtkPoints()
     coordinates = cuds.get_coordinate
 
+    # copy node data
     point_data = poly_data.GetPointData()
     data_collector = CUBADataAccumulator(container=point_data)
     for node in cuds.iter_nodes():
@@ -93,6 +94,7 @@ def _mesh2unstructured_grid(cuds):
     unstructured_grid = vtk.vtkUnstructuredGrid()
     unstructured_grid.Allocate()
 
+    # copy points
     points = vtk.vtkPoints()
     point_data = unstructured_grid.GetPointData()
     data_collector = CUBADataAccumulator(container=point_data)
@@ -101,9 +103,11 @@ def _mesh2unstructured_grid(cuds):
         points.InsertNextPoint(*point.coordinates)
         data_collector.append(point.data)
 
+    # prepare to copy elements
     cell_data = unstructured_grid.GetCellData()
     data_collector = CUBADataAccumulator(container=cell_data)
 
+    # copy edges
     mapping = points2edge()
     for edge in cuds.iter_edges():
         npoints = len(edge.points)
@@ -113,6 +117,7 @@ def _mesh2unstructured_grid(cuds):
         unstructured_grid.InsertNextCell(mapping[npoints], ids)
         data_collector.append(edge.data)
 
+    # copy faces
     mapping = points2face()
     for face in cuds.iter_faces():
         npoints = len(face.points)
@@ -122,6 +127,7 @@ def _mesh2unstructured_grid(cuds):
         unstructured_grid.InsertNextCell(mapping[npoints], ids)
         data_collector.append(face.data)
 
+    # copy cells
     mapping = points2cell()
     for cell in cuds.iter_cells():
         npoints = len(cell.points)
