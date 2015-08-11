@@ -22,6 +22,9 @@ def cuds2vtk(cuds):
             data_set = _lattice2structured_points(cuds)
         elif lattice_type == 'Hexagonal':
             data_set = _lattice2poly_data(cuds)
+    else:
+        msg = 'Provided object {} is not of any known cuds container types'
+        raise TypeError(msg.format(type(cuds)))
 
     return data_set
 
