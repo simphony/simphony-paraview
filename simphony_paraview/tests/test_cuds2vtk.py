@@ -4,14 +4,11 @@ from functools import partial
 
 import numpy
 from numpy.testing import assert_array_equal
-from hypothesis import given
-from hypothesis.strategies import sampled_from
 from paraview.numpy_support import vtk_to_numpy
-from paraview import vtk
 from simphony.core.data_container import DataContainer
 from simphony.core.cuba import CUBA
 from simphony.cuds import (
-    Particle, Bond, Particles, LatticeNode, Mesh, Point, Edge, Cell, Face)
+    Particle, Bond, Particles, Mesh, Point, Edge, Cell, Face)
 from simphony.cuds.lattice import (
     make_hexagonal_lattice, make_cubic_lattice, make_square_lattice,
     make_rectangular_lattice, make_orthorombicp_lattice)
@@ -21,14 +18,6 @@ from simphony.testing.utils import (
 from simphony_paraview.cuds2vtk import cuds2vtk
 from simphony_paraview.core.api import (
     iter_cells, iter_grid_cells, points2edge, points2face, points2cell)
-
-
-lattice_types = sampled_from([
-    make_square_lattice('test', 0.1, (3, 6)),
-    make_cubic_lattice('test', 0.1, (3, 6, 5)),
-    make_hexagonal_lattice('test', 0.1, (5, 4)),
-    make_rectangular_lattice('test', (0.1, 0.3), (3, 6)),
-    make_orthorombicp_lattice('test', (0.1, 0.2, 0.1), (3, 7, 6))])
 
 
 class TestCUDS2VTK(unittest.TestCase):
@@ -328,6 +317,9 @@ class TestCUDS2VTK(unittest.TestCase):
         self.assertEqual(temperature.GetName(), 'TEMPERATURE')
         self.assertItemsEqual(
             vtk_to_numpy(temperature), range(5))
+
+        for edge in cuds.iter_edges():
+
 
     def test_with_empty_cuds_mesh(self):
         # given
