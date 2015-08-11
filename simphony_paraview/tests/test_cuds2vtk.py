@@ -284,33 +284,6 @@ class TestCUDS2VTK(unittest.TestCase):
         # then check cells
         self.assertEqual(data_set.GetNumberOfCells(), 5)
 
-        links = [[
-            point.coordinates
-            for point in cuds.iter_points(edge.points)]
-            for edge in cuds.iter_edges()]
-        edges = [[
-            data_set.GetPoint(index) for index in line]
-            for line in iter_grid_cells(data_set, points2edge().values())]
-        self.assertItemsEqual(edges, links)
-
-        links = [[
-            point.coordinates
-            for point in cuds.iter_points(face.points)]
-            for face in cuds.iter_faces()]
-        faces = [[
-            data_set.GetPoint(index) for index in line]
-            for line in iter_grid_cells(data_set, points2face().values())]
-        self.assertItemsEqual(faces, links)
-
-        links = [[
-            point.coordinates
-            for point in cuds.iter_points(cell.points)]
-            for cell in cuds.iter_cells()]
-        cells = [[
-            data_set.GetPoint(index) for index in line]
-            for line in iter_grid_cells(data_set, points2cell().values())]
-        self.assertItemsEqual(cells, links)
-
         cell_data = data_set.GetCellData()
         self.assertEqual(cell_data.GetNumberOfArrays(), 1)
         temperature = cell_data.GetArray(0)
@@ -318,8 +291,21 @@ class TestCUDS2VTK(unittest.TestCase):
         self.assertItemsEqual(
             vtk_to_numpy(temperature), range(5))
 
-        for edge in cuds.iter_edges():
-
+        # For each cell in the container
+        # find the corresponding cell in the vtkCellArray and
+        # verify that they link to points that have the right coordinates.
+        for cell in itertools.chain(
+                cuds.iter_edges(), cuds.iter_faces(), cuds.iter_cells()):
+            # The temperature value is also the index that the cells
+            # are expected to have in the vtkCellArray.
+            value = cell.data[CUBA.TEMPERATURE]
+            index = numpy.nonzero(vtk_to_numpy(temperature) == value)[0]
+            vtk_cell = data_set.GetCell(index)
+            ids = vtk_cell.GetPointIds()
+            for i, uid in enumerate(cell.points):
+                cell_point = cuds.get_point(uid)
+                assert_array_equal(
+                    data_set.GetPoint(ids.GetId(i)), cell_point.coordinates)
 
     def test_with_empty_cuds_mesh(self):
         # given
