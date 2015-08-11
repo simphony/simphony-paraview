@@ -16,8 +16,7 @@ from simphony.testing.utils import (
     compare_data_containers, compare_particles, compare_bonds, compare_points)
 
 from simphony_paraview.cuds2vtk import cuds2vtk
-from simphony_paraview.core.api import (
-    iter_cells, points2edge, points2face, points2cell)
+from simphony_paraview.core.api import iter_cells
 
 
 class TestCUDS2VTK(unittest.TestCase):
