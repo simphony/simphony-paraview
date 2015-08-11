@@ -17,7 +17,7 @@ from simphony.testing.utils import (
 
 from simphony_paraview.cuds2vtk import cuds2vtk
 from simphony_paraview.core.api import (
-    iter_cells, iter_grid_cells, points2edge, points2face, points2cell)
+    iter_cells, points2edge, points2face, points2cell)
 
 
 class TestCUDS2VTK(unittest.TestCase):
