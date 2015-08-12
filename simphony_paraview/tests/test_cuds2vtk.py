@@ -334,6 +334,14 @@ class TestCUDS2VTK(unittest.TestCase):
             node.data[CUBA.VELOCITY] = node.index
         lattice.update_nodes(nodes)
 
+    def test_with_invalid_cuds(self):
+        # given
+        cuds = object()
+
+        # when/then
+        with self.assertRaises(TypeError):
+            cuds2vtk(cuds)
+
 
 if __name__ == '__main__':
     unittest.main()
