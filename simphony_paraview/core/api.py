@@ -2,7 +2,8 @@ from .iterators import iter_cells, iter_grid_cells
 from .cuba_data_accumulator import CUBADataAccumulator
 from .cuba_utils import (
     supported_cuba, cuba_value_types, default_cuba_value, VALUETYPES)
-from .constants import points2edge, points2face, points2cell
+from .constants import points2edge, points2face, points2cell, dataset2writer
+
 from .cuds2vtk import cuds2vtk
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     'points2edge',
     'points2face',
     'points2cell',
+    'dataset2writer',
     'cuds2vtk']
