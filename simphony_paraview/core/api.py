@@ -3,7 +3,7 @@ from .cuba_data_accumulator import CUBADataAccumulator
 from .cuba_utils import (
     supported_cuba, cuba_value_types, default_cuba_value, VALUETYPES)
 from .constants import points2edge, points2face, points2cell
-
+from .cuds2vtk import cuds2vtk
 
 __all__ = [
     'iter_cells',
@@ -15,4 +15,5 @@ __all__ = [
     'VALUETYPES',
     'points2edge',
     'points2face',
-    'points2cell']
+    'points2cell',
+    'cuds2vtk']
