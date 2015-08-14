@@ -3,6 +3,7 @@ from .cuba_data_accumulator import CUBADataAccumulator
 from .cuba_utils import (
     supported_cuba, cuba_value_types, default_cuba_value, VALUETYPES)
 from .constants import points2edge, points2face, points2cell, dataset2writer
+from .paraview_utils import write_to_file, loadded_in_paraview
 
 from .cuds2vtk import cuds2vtk
 
@@ -18,4 +19,7 @@ __all__ = [
     'points2face',
     'points2cell',
     'dataset2writer',
+    'running_in_paraview',
+    'write_to_file',
+    'loadded_in_paraview',
     'cuds2vtk']
