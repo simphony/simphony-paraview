@@ -1,6 +1,7 @@
 from numpy import array, prod
 
 from hypothesis.strategies import sampled_from
+from paraview import vtkConstants
 from simphony.core.data_container import DataContainer
 from simphony.core.cuba import CUBA
 from simphony.cuds import (
@@ -80,6 +81,8 @@ def create_example_particles():
 
 
 cuds_containers = sampled_from([
-    (create_example_mesh(array_name='TEMPERATURE'), 'mesh'),
-    (create_example_lattice(array_name='TEMPERATURE'), 'lattice-3d'),
-    (create_example_particles(array_name='TEMPERATURE'), 'particles')])
+    (create_example_mesh(), vtkConstants.VTK_UNSTRUCTURED_GRID),
+    # XXX while the lattice is a vtkStructuredPoints dataset it is
+    # read as vtkImageData
+    (create_example_lattice(), vtkConstants.VTK_IMAGE_DATA),
+    (create_example_particles(), vtkConstants.VTK_POLY_DATA)])
