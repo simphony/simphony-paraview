@@ -1,6 +1,8 @@
 from collections import defaultdict
 
 from paraview import vtk
+from paraview import vtkConstants
+from paraview.vtk import io
 
 
 def points2edge():
@@ -26,3 +28,11 @@ def points2cell():
         5: vtk.vtkPyramid().GetCellType(),
         10: vtk.vtkPentagonalPrism().GetCellType(),
         12: vtk.vtkHexagonalPrism().GetCellType()}
+
+
+def dataset2writer():
+    """ Return a mapping from dataset type to writer instances """
+    return {
+        vtkConstants.VTK_UNSTRUCTURED_GRID: io.vtkUnstructuredGridWriter,
+        vtkConstants.VTK_STRUCTURED_POINTS: io.vtkStructuredPointsWriter,
+        vtkConstants.VTK_POLY_DATA: io.vtkPolyDataWriter}
