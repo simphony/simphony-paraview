@@ -14,4 +14,3 @@ class TestPluginLoading(unittest.TestCase):
         from simphony.visualisation import paraview_tools
 
         self.assertTrue(hasattr(paraview_tools, '__version__'))
-        self.assertTrue(hasattr(paraview_tools, 'cuds2vtk'))
