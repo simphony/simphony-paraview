@@ -15,4 +15,5 @@ __all__ = [
     'VALUETYPES',
     'points2edge',
     'points2face',
+    'points2cell',
     'cuds2vtk']
