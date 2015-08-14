@@ -7,6 +7,7 @@ from .paraview_utils import write_to_file, loadded_in_paraview
 
 from .cuds2vtk import cuds2vtk
 
+
 __all__ = [
     'iter_cells',
     'iter_grid_cells',
@@ -19,7 +20,6 @@ __all__ = [
     'points2face',
     'points2cell',
     'dataset2writer',
-    'running_in_paraview',
     'write_to_file',
     'loadded_in_paraview',
     'cuds2vtk']

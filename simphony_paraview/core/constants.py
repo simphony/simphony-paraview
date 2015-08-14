@@ -4,6 +4,7 @@ from paraview import vtk
 from paraview import vtkConstants
 from paraview.vtk import io
 
+
 def points2edge():
     """ Return a mapping from number of points to line cells. """
     return defaultdict(

@@ -6,15 +6,8 @@ import shutil
 from paraview import servermanager
 from paraview.simple import Disconnect, Connect, Delete, OpenDataFile
 
-from paraview import vtk
-from paraview.vtk import io
-
 from .cuds2vtk import cuds2vtk
 from .constants import dataset2writer
-
-
-def running_in_paraview():
-    return servermanager.fromGUI
 
 
 @contextlib.contextmanager
