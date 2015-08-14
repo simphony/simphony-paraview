@@ -12,6 +12,7 @@ before_install:
   - sudo apt-get install paraview
 install:
   - pip install -r dev-requirements.txt
+  - pip install -r test-requirements.txt
   - pip install git+https://github.com/simphony/simphony-common.git@${SIMPHONY_VERSION}#egg=simphony
   - python setup.py develop
 script:
