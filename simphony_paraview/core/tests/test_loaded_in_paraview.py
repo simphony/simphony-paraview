@@ -4,11 +4,11 @@ from hypothesis import given
 from paraview import servermanager
 from paraview.simple import Connect, Disconnect, GetActiveSource
 
-from simphony_paraview.core.api import loadded_in_paraview
+from simphony_paraview.core.api import loaded_in_paraview
 from simphony_paraview.core.testing import cuds_containers
 
 
-class TestWriteToFile(unittest.TestCase):
+class TestLoadedInParaview(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -23,7 +23,7 @@ class TestWriteToFile(unittest.TestCase):
         cuds, kind = setup
 
         # when/then
-        with loadded_in_paraview(cuds) as source:
+        with loaded_in_paraview(cuds) as source:
             info = source.GetDataInformation()
             self.assertEqual(info.GetDataSetType(), kind)
 
@@ -35,7 +35,7 @@ class TestWriteToFile(unittest.TestCase):
         # when/then
         connection = Connect()
         try:
-            with loadded_in_paraview(cuds) as source:
+            with loaded_in_paraview(cuds) as source:
                 info = source.GetDataInformation()
                 self.assertEqual(info.GetDataSetType(), kind)
                 self.assertEqual(servermanager.ActiveConnection, connection)

@@ -11,11 +11,12 @@ from .constants import dataset2writer
 
 
 @contextlib.contextmanager
-def loadded_in_paraview(cuds):
-    """ Push dataset to the Paraview server.
+def loaded_in_paraview(cuds):
+    """ Push cuds dataset to the Paraview server.
 
-    The context manager will create a connection if necessary and
-
+    The context manager will create a connection if necessary and save the
+    data of the cuds container into a vtk file. The vtk file is then loaded
+    in the paraview server and a proxy source is returned.
 
     """
     temp_dir = tempfile.mkdtemp(prefix='simphony-')
@@ -38,6 +39,7 @@ def loadded_in_paraview(cuds):
 
 
 def write_to_file(cuds, filename):
+    """ Write a cuds container into a vtk file. """
     data_set = cuds2vtk(cuds)
     kind = data_set.GetDataObjectType()
     writer = dataset2writer()[kind]()
