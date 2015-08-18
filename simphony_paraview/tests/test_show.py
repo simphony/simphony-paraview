@@ -1,4 +1,3 @@
-import threading
 import unittest
 
 from hypothesis import given

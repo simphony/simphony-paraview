@@ -1,5 +1,3 @@
-import threading
-
 from paraview.simple import CreateRenderView, Show, Render
 from vtkRenderingPython import (
     vtkRenderWindowInteractor, vtkInteractorStyleSwitch)
