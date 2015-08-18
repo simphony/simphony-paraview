@@ -17,6 +17,8 @@ class TestWriteToFile(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         self.filename = os.path.join(self.temp_dir, 'test_file.vtk')
         self.addCleanup(self.cleanup)
+        if servermanager.ActiveConnection is not None:
+            Disconnect()
 
     def tearDown(self):
         if servermanager.ActiveConnection is not None:
