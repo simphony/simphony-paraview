@@ -1,3 +1,3 @@
-from .cuds2vtk import cuds2vtk
+from .show import show
 
-__all__ = ['cuds2vtk']
+__all__ = ['show']
