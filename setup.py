@@ -108,8 +108,9 @@ if __name__ == "__main__":
         description='The paraview visualisation plugin for SimPhoNy',
         long_description=open('README.rst').read(),
         install_requires=["simphony>=0.2.0"],
+        tests_requires=["hypothesis"],
         packages=find_packages(),
         entry_points={'simphony.visualisation': plugin},
         version=__version__,
-        zip_safe=not on_rtd,
+        zip_safe=False,
         license='BSD')
