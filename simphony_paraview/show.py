@@ -1,9 +1,10 @@
-from paraview.simple import CreateRenderView, Show, Render
+from paraview import servermanager
+from paraview.servermanager import CreateRenderView
 from vtkRenderingPython import (
     vtkRenderWindowInteractor, vtkInteractorStyleSwitch)
 
-
 from simphony_paraview.core.api import loaded_in_paraview
+from simphony_paraview.core.fixes import CreateRepresentation
 
 
 def show(cuds, testing=None):
@@ -21,7 +22,13 @@ def show(cuds, testing=None):
 
     """
     with loaded_in_paraview(cuds) as source:
+
+        # XXX Special workaround to avoid segfault on exit as
+        # as seen in http://www.paraview.org/Bug/view.php?id=13124
+
         view = CreateRenderView()
+        representation = CreateRepresentation(source, view)
+
         interactor = vtkRenderWindowInteractor()
         interactor.SetInteractorStyle(vtkInteractorStyleSwitch())
         interactor.SetRenderWindow(view.GetRenderWindow())
@@ -32,8 +39,8 @@ def show(cuds, testing=None):
             handler = Handler(testing, timerid)
             interactor.AddObserver('TimerEvent', handler)
         try:
-            Show(source, view)
-            Render()
+            view.ResetCamera()
+            view.StillRender()
             interactor.Start()
         finally:
             interactor.RemoveAllObservers()
