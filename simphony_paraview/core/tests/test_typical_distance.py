@@ -1,8 +1,6 @@
 import unittest
-import math
 
 from paraview.simple import PointSource, Connect, Disconnect, Delete, Line
-
 
 from simphony_paraview.core.paraview_utils import typical_distance
 
