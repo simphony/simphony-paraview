@@ -35,23 +35,36 @@ def show(cuds, select=None, testing=None):
 
         representation = CreateRepresentation(source, view)
 
+        message = "Container does not have: {}"
+
         if isinstance(cuds, ABCLattice):
             representation.Representation = "Points"
             if select is not None:
-                set_data(representation, source, select)
+                items = select[1]
+                if items == 'nodes':
+                    set_data(representation, source, select)
+                else:
+                    raise ValueError(message.format(items))
         elif isinstance(cuds, ABCParticles):
             sphere = Sphere(Radius=typical_distance(source))
             glyphs = Glyph(Input=source, ScaleMode='off', GlyphType=sphere)
             glyph_representation = CreateRepresentation(glyphs, view)
             if select is not None:
-                if select[1] == 'particles':
+                items = select[1]
+                if items == 'particles':
                     set_data(glyph_representation, source, select)
-                else:
+                elif items == 'bonds':
                     set_data(representation, source, select)
+                else:
+                    raise ValueError(message.format(items))
         elif isinstance(cuds, ABCMesh):
             representation.Representation = "Surface"
             if select is not None:
-                set_data(representation, source, select)
+                items = select[1]
+                if items == 'points' or items == 'elements':
+                    set_data(representation, source, select)
+                else:
+                    raise ValueError(message.format(items))
 
         interactor = vtkRenderWindowInteractor()
         interactor.SetInteractorStyle(vtkInteractorStyleSwitch())

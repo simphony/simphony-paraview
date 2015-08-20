@@ -45,17 +45,23 @@ def create_example_mesh():
 
     # add edges
     mesh.add_edges(
-        Edge(points=[uids[index] for index in element])
+        Edge(
+            points=[uids[index] for index in element],
+            data=DataContainer(TEMPERATURE=index))
         for index, element in enumerate(edges))
 
     # add faces
     mesh.add_faces(
-        Face(points=[uids[index] for index in element])
+        Face(
+            points=[uids[index] for index in element],
+            data=DataContainer(TEMPERATURE=index))
         for index, element in enumerate(faces))
 
     # add cells
     mesh.add_cells(
-        Cell(points=[uids[index] for index in element])
+        Cell(
+            points=[uids[index] for index in element],
+            data=DataContainer(TEMPERATURE=index))
         for index, element in enumerate(cells))
 
     return mesh
@@ -74,7 +80,9 @@ def create_example_particles():
         for index, point in enumerate(points))
 
     particles.add_bonds(
-        Bond(particles=[uids[index] for index in indices])
+        Bond(
+            particles=[uids[index] for index in indices],
+            data=DataContainer(TEMPERATURE=temperature[index]))
         for indices in bonds)
 
     return particles
