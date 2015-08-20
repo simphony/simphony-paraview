@@ -78,8 +78,11 @@ def set_data(representation, source, select):
         array = source.PointData[name]
         representation.LookupTable = MakeBlueToRedLT(*array.GetRange())
         representation.ColorAttributeType = 'POINT_DATA'
-    else:
+    elif select[1] in ('elements', 'bonds'):
         array = source.CellData[name]
         representation.LookupTable = MakeBlueToRedLT(*array.GetRange())
         representation.ColorAttributeType = 'CELL_DATA'
+    else:
+        message = "Unknown data attribute selection {}"
+        raise ValueError(message.format(select[1]))
     representation.ColorArrayName = name

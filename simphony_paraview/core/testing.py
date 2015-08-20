@@ -86,3 +86,42 @@ cuds_containers = sampled_from([
     # read as vtkImageData
     (create_example_lattice(), vtkConstants.VTK_IMAGE_DATA),
     (create_example_particles(), vtkConstants.VTK_POLY_DATA)])
+
+
+add_point_data_filter_script = ("""
+
+from paraview import vtk
+
+input = self.GetPolyDataInput();
+output =  self.GetPolyDataOutput();
+
+colors = vtk.vtkUnsignedCharArray();
+colors.SetNumberOfComponents(3);
+colors.SetName({!r});
+
+numPoints = input.GetNumberOfPoints()
+for i in xrange(0, numPoints):
+    colors.InsertNextTuple3(255,0,0);
+
+output.GetPointData().AddArray(colors)
+
+del colors """)
+
+add_cell_data_filter_script = ("""
+
+from paraview import vtk
+
+input = self.GetPolyDataInput();
+output =  self.GetPolyDataOutput();
+
+colors = vtk.vtkUnsignedCharArray();
+colors.SetNumberOfComponents(3);
+colors.SetName({!r});
+
+numCells = input.GetNumberOfCells()
+for i in xrange(0, numCells):
+    colors.InsertNextTuple3(255,0,0);
+
+output.GetCellData().AddArray(colors)
+
+del colors """)
