@@ -3,6 +3,8 @@ import os
 import tempfile
 import shutil
 
+import numpy
+
 from paraview import servermanager
 from paraview.simple import (
     Disconnect, Connect, Delete, OpenDataFile, MakeBlueToRedLT)
@@ -47,6 +49,26 @@ def write_to_file(cuds, filename):
     writer.SetFileName(filename)
     writer.SetInput(data_set)
     writer.Write()
+
+
+def typical_distance(source):
+    """ Returns a typical distance in a cloud of points.
+
+    This is done by taking the size of the bounding box, and dividing it
+    by the cubic root of the number of points.
+
+    .. note:: Code inspired from the Mayavi package.
+
+    """
+    info = source.GetDataInformation()
+    x_min, x_max, y_min, y_max, z_min, z_max = info.GetBounds()
+    distance = numpy.sqrt(
+        ((x_max - x_min) ** 2 + (y_max - y_min) ** 2 +
+         (z_max - z_min) ** 2) / (4 * info.GetNumberOfPoints() ** (0.33)))
+    if distance == 0:
+        return 1
+    else:
+        return 0.2 * distance
 
 
 def set_data(representation, source, select):
