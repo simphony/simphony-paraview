@@ -28,7 +28,7 @@ class TestShow(unittest.TestCase):
         def close(obj, event):
             obj.TerminateApp()
 
-        show(cuds, close)
+        show(cuds, testing=close)
 
     def test_unknown_container(self):
         container = object()
