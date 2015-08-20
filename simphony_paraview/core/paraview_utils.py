@@ -4,7 +4,8 @@ import tempfile
 import shutil
 
 from paraview import servermanager
-from paraview.simple import Disconnect, Connect, Delete, OpenDataFile
+from paraview.simple import (
+    Disconnect, Connect, Delete, OpenDataFile, MakeBlueToRedLT)
 
 from .cuds2vtk import cuds2vtk
 from .constants import dataset2writer
@@ -46,3 +47,16 @@ def write_to_file(cuds, filename):
     writer.SetFileName(filename)
     writer.SetInput(data_set)
     writer.Write()
+
+
+def set_data(representation, source, select):
+    name = select[0].name
+    if select[1] in ('points', 'particles', 'nodes'):
+        array = source.PointData[name]
+        representation.LookupTable = MakeBlueToRedLT(*array.GetRange())
+        representation.ColorAttributeType = 'POINT_DATA'
+    else:
+        array = source.CellData[name]
+        representation.LookupTable = MakeBlueToRedLT(*array.GetRange())
+        representation.ColorAttributeType = 'CELL_DATA'
+    representation.ColorArrayName = name
