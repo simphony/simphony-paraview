@@ -3,7 +3,7 @@ import os
 import tempfile
 import shutil
 
-import numpy
+import math
 
 from paraview import servermanager
 from paraview.simple import (
@@ -60,15 +60,16 @@ def typical_distance(source):
     .. note:: Code inspired from the Mayavi package.
 
     """
+    source.UpdatePipeline()  #  Make sure that the bounds are uptodata
     info = source.GetDataInformation()
     x_min, x_max, y_min, y_max, z_min, z_max = info.GetBounds()
-    distance = numpy.sqrt(
-        ((x_max - x_min) ** 2 + (y_max - y_min) ** 2 +
-         (z_max - z_min) ** 2) / (4 * info.GetNumberOfPoints() ** (0.33)))
-    if distance == 0:
-        return 1
+    distance = math.sqrt(
+        (x_max - x_min) ** 2 + (y_max - y_min) ** 2 + (z_max - z_min) ** 2)
+    distance /= info.GetNumberOfPoints()
+    if distance == 0.0:
+        return 1.0
     else:
-        return 0.2 * distance
+        return 0.5 * distance
 
 
 def set_data(representation, source, select):
