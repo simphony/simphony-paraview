@@ -7,6 +7,9 @@ virtualenv:
 env:
   - SIMPHONY_VERSION=0.2.0
   - SIMPHONY_VERSION=master
+matrix:
+  allow_failures:
+    - env: SIMPHONY_VERSION=master
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install paraview
