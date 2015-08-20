@@ -15,7 +15,6 @@ def set_temperature(nodes):
 lattice.update_nodes(set_temperature(lattice.iter_nodes()))
 
 
-
 if __name__ == '__main__':
     from simphony.visualisation import paraview_tools
 

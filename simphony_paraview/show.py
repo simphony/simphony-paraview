@@ -1,5 +1,4 @@
 from paraview.simple import Glyph, Sphere
-from paraview import servermanager
 from paraview.servermanager import CreateRenderView
 from vtkRenderingPython import (
     vtkRenderWindowInteractor, vtkInteractorStyleSwitch)
