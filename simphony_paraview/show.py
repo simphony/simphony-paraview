@@ -1,13 +1,16 @@
+from paraview.simple import Glyph, Sphere
 from paraview import servermanager
 from paraview.servermanager import CreateRenderView
 from vtkRenderingPython import (
     vtkRenderWindowInteractor, vtkInteractorStyleSwitch)
+from simphony.cuds import ABCMesh, ABCLattice, ABCParticles
 
-from simphony_paraview.core.api import loaded_in_paraview
+from simphony_paraview.core.api import (
+    loaded_in_paraview, typical_distance, set_data)
 from simphony_paraview.core.fixes import CreateRepresentation
 
 
-def show(cuds, testing=None):
+def show(cuds, select=None, testing=None):
     """ Show the cuds objects using the default visualisation.
 
      Parameters
@@ -27,7 +30,29 @@ def show(cuds, testing=None):
         # as seen in http://www.paraview.org/Bug/view.php?id=13124
 
         view = CreateRenderView()
+        view.ResetCamera()
+        camera = view.GetActiveCamera()
+        camera.Elevation(45)
+
         representation = CreateRepresentation(source, view)
+
+        if isinstance(cuds, ABCLattice):
+            representation.Representation = "Points"
+            if select is not None:
+                set_data(representation, source, select)
+        elif isinstance(cuds, ABCParticles):
+            sphere = Sphere(Radius=typical_distance(source))
+            glyphs = Glyph(Input=source, ScaleMode='off', GlyphType=sphere)
+            glyph_representation = CreateRepresentation(glyphs, view)
+            if select is not None:
+                if select[1] == 'particles':
+                    set_data(glyph_representation, source, select)
+                else:
+                    set_data(representation, source, select)
+        elif isinstance(cuds, ABCMesh):
+            representation.Representation = "Surface"
+            if select is not None:
+                set_data(representation, source, select)
 
         interactor = vtkRenderWindowInteractor()
         interactor.SetInteractorStyle(vtkInteractorStyleSwitch())
@@ -39,7 +64,6 @@ def show(cuds, testing=None):
             handler = Handler(testing, timerid)
             interactor.AddObserver('TimerEvent', handler)
         try:
-            view.ResetCamera()
             view.StillRender()
             interactor.Start()
         finally:
