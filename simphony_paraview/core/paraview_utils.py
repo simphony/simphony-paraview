@@ -73,6 +73,25 @@ def typical_distance(source):
 
 
 def set_data(representation, source, select):
+    """ Set the array selection on the representation.
+
+    The function will create a BlueToRed lookup table based on The
+    selected array range and setup the representation to show the
+    mapping in the view.
+
+    Parameters
+    ----------
+    representation :
+        The paraview representation proxy.
+
+    source :
+        The paraview source proxy for which we have the representation.
+
+    select : tuple
+        A tuple of (CUBA, kind) that defines the CUBA attribute to select
+        for the specific item group.
+
+    """
     name = select[0].name
     if select[1] in ('points', 'particles', 'nodes'):
         array = source.PointData[name]
