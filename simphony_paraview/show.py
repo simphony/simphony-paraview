@@ -68,9 +68,10 @@ def show(cuds, select=None, testing=None):
             handler = Handler(testing, timerid)
             interactor.AddObserver('TimerEvent', handler)
         try:
-            view.ResetCamera()
             camera = view.GetActiveCamera()
             camera.Elevation(45)
+            camera.Yaw(45)
+            view.ResetCamera()
             view.StillRender()
             interactor.Start()
         finally:
