@@ -12,15 +12,21 @@ from simphony_paraview.core.fixes import CreateRepresentation
 def show(cuds, select=None, testing=None):
     """ Show the cuds objects using the default visualisation.
 
-     Parameters
-     ----------
-     cuds : {ABCLattice, ABCMesh, ABCParticles}
-         A top level cuds object (e.g. a mesh). The method will detect
-         the type of object and create the appropriate visualisation.
-     testing : callable(obj, event)
-         A callable object that accepts an the interactor object and a
-         time event. The callable will be executed after 1000 msec.
-         This is commonly used for testing. Default value is None
+    Parameters
+    ----------
+    cuds : {ABCLattice, ABCMesh, ABCParticles}
+        A top level cuds object (e.g. a mesh). The method will detect
+        the type of object and create the appropriate visualisation.
+
+    select : tuple(CUBA, kind)
+        The (CUBA, kind) selection of the CUBA attribute to
+        use. ``kind`` can be one of the {'point', 'particles',
+        'nodes', 'elements', 'bonds'}
+
+    testing : callable(obj, event)
+        A callable object that accepts an the interactor object and a
+        time event. The callable will be executed after 1000 msec.
+        This is commonly used for testing. Default value is None
 
     """
     with loaded_in_paraview(cuds) as source:
@@ -29,9 +35,6 @@ def show(cuds, select=None, testing=None):
         # as seen in http://www.paraview.org/Bug/view.php?id=13124
 
         view = CreateRenderView()
-        view.ResetCamera()
-        camera = view.GetActiveCamera()
-        camera.Elevation(45)
 
         representation = CreateRepresentation(source, view)
 
@@ -76,6 +79,9 @@ def show(cuds, select=None, testing=None):
             handler = Handler(testing, timerid)
             interactor.AddObserver('TimerEvent', handler)
         try:
+            view.ResetCamera()
+            camera = view.GetActiveCamera()
+            camera.Elevation(45)
             view.StillRender()
             interactor.Start()
         finally:
@@ -83,6 +89,9 @@ def show(cuds, select=None, testing=None):
 
 
 class Handler(object):
+    """ Hepler class to hold the callback to execute on timer event.
+
+    """
 
     def __init__(self, callback, timerid):
         self.callback = callback
