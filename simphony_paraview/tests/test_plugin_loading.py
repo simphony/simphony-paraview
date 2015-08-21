@@ -15,3 +15,4 @@ class TestPluginLoading(unittest.TestCase):
 
         self.assertTrue(hasattr(paraview_tools, '__version__'))
         self.assertTrue(hasattr(paraview_tools, 'show'))
+        self.assertTrue(hasattr(paraview_tools, 'snapshot'))
