@@ -19,7 +19,6 @@ def CreateRepresentation(aProxy, view, **extraArgs):
     specify proxyName (optional) to create a representation of a
     particular type.
 
-
     """
     rendering = servermanager.rendering
     if not aProxy:
