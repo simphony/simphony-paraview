@@ -11,7 +11,8 @@ from simphony_paraview.core.testing import cuds_containers
 class TestLoadedInParaview(unittest.TestCase):
 
     def setUp(self):
-        pass
+        if servermanager.ActiveConnection is not None:
+            Disconnect()
 
     def tearDown(self):
         if servermanager.ActiveConnection is not None:

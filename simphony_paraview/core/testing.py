@@ -45,17 +45,23 @@ def create_example_mesh():
 
     # add edges
     mesh.add_edges(
-        Edge(points=[uids[index] for index in element])
+        Edge(
+            points=[uids[index] for index in element],
+            data=DataContainer(TEMPERATURE=index))
         for index, element in enumerate(edges))
 
     # add faces
     mesh.add_faces(
-        Face(points=[uids[index] for index in element])
+        Face(
+            points=[uids[index] for index in element],
+            data=DataContainer(TEMPERATURE=index))
         for index, element in enumerate(faces))
 
     # add cells
     mesh.add_cells(
-        Cell(points=[uids[index] for index in element])
+        Cell(
+            points=[uids[index] for index in element],
+            data=DataContainer(TEMPERATURE=index))
         for index, element in enumerate(cells))
 
     return mesh
@@ -74,7 +80,9 @@ def create_example_particles():
         for index, point in enumerate(points))
 
     particles.add_bonds(
-        Bond(particles=[uids[index] for index in indices])
+        Bond(
+            particles=[uids[index] for index in indices],
+            data=DataContainer(TEMPERATURE=temperature[index]))
         for indices in bonds)
 
     return particles
@@ -86,3 +94,44 @@ cuds_containers = sampled_from([
     # read as vtkImageData
     (create_example_lattice(), vtkConstants.VTK_IMAGE_DATA),
     (create_example_particles(), vtkConstants.VTK_POLY_DATA)])
+
+
+#: Paraview filter to add dummy values to PointData of source.
+add_point_data_filter_script = ("""
+
+from paraview import vtk
+
+input = self.GetPolyDataInput();
+output =  self.GetPolyDataOutput();
+
+colors = vtk.vtkUnsignedCharArray();
+colors.SetNumberOfComponents(3);
+colors.SetName({!r});
+
+numPoints = input.GetNumberOfPoints()
+for i in xrange(0, numPoints):
+    colors.InsertNextTuple3(255,0,0);
+
+output.GetPointData().AddArray(colors)
+
+del colors """)
+
+#: Paraview filter to add dummy values to CellData of source.
+add_cell_data_filter_script = ("""
+
+from paraview import vtk
+
+input = self.GetPolyDataInput();
+output =  self.GetPolyDataOutput();
+
+colors = vtk.vtkUnsignedCharArray();
+colors.SetNumberOfComponents(3);
+colors.SetName({!r});
+
+numCells = input.GetNumberOfCells()
+for i in xrange(0, numCells):
+    colors.InsertNextTuple3(255,0,0);
+
+output.GetCellData().AddArray(colors)
+
+del colors """)

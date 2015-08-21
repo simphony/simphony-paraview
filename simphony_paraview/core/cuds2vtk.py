@@ -4,8 +4,8 @@ import numpy
 from paraview import vtk
 from simphony.cuds import ABCMesh, ABCParticles, ABCLattice
 
-from simphony_paraview.core.api import (
-    CUBADataAccumulator, points2edge, points2face, points2cell)
+from .cuba_data_accumulator import CUBADataAccumulator
+from .constants import points2edge, points2face, points2cell
 
 
 def cuds2vtk(cuds):
