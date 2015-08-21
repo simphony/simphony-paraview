@@ -9,8 +9,12 @@ class TestTypicalDistance(unittest.TestCase):
 
     def setUp(self):
         Connect()
+        self.source = None
 
     def tearDown(self):
+        if self.source is not None:
+            Delete(self.source)
+            self.source = None
         Disconnect()
 
     def test_single_point(self):
@@ -20,11 +24,8 @@ class TestTypicalDistance(unittest.TestCase):
             NumberOfPoints=1,
             Radius=2.0)
 
-        try:
-            # when
-            distance = typical_distance(source)
-        finally:
-            Delete(source)
+        # when
+        distance = typical_distance(source)
 
         # then
         self.assertEqual(distance, 1.0)
@@ -32,11 +33,9 @@ class TestTypicalDistance(unittest.TestCase):
     def test_basic_usage(self):
         # given
         source = Line()
-        try:
-            # when
-            distance = typical_distance(source)
-        finally:
-            Delete(source)
+
+        # when
+        distance = typical_distance(source)
 
         # then
         info = source.GetDataInformation()
