@@ -96,6 +96,7 @@ cuds_containers = sampled_from([
     (create_example_particles(), vtkConstants.VTK_POLY_DATA)])
 
 
+#: Paraview filter to add dummy values to PointData of source.
 add_point_data_filter_script = ("""
 
 from paraview import vtk
@@ -115,6 +116,7 @@ output.GetPointData().AddArray(colors)
 
 del colors """)
 
+#: Paraview filter to add dummy values to CellData of source.
 add_cell_data_filter_script = ("""
 
 from paraview import vtk
