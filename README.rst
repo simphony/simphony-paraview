@@ -33,7 +33,7 @@ Optional requirements
 To support the documentation built you need the following packages:
 
 - sphinx >= 1.2.3
-- sectiondoc commit 8a0c2be, https://github.com/enthought/sectiondoc
+- sectiondoc https://github.com/enthought/sectiondoc
 - mock
 
 Alternative running :command:`pip install -r doc_requirements` should install the
