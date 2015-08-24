@@ -12,7 +12,7 @@ matrix:
     - env: SIMPHONY_VERSION=master
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install paraview
+  - sudo apt-get install paraview python-imaging
   - pip install -r dev-requirements.txt
   - pip install -r test-requirements.txt
   - pip install git+https://github.com/simphony/simphony-common.git@${SIMPHONY_VERSION}#egg=simphony
@@ -23,7 +23,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 script:
   - flake8 .
-  - coverage run -m unittest discover
+  - coverage run -m unittest discover -v
 after_success:
   - pip install codecov
   - codecov
