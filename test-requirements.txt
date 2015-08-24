@@ -1,1 +1,4 @@
+--allow-external PIL
+--allow-unverified PIL
 hypothesis
+PIL
