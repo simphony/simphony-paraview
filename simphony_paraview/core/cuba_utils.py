@@ -1,7 +1,6 @@
 import warnings
 
 import numpy
-import enum
 from simphony.core.cuba import CUBA
 from simphony.core.keywords import KEYWORDS
 
