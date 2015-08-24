@@ -20,10 +20,10 @@ def snapshot(cuds, filename, select=None):
      filename : string
          The filename to use for the output file.
 
-    select : tuple(CUBA, kind)
-        The (CUBA, kind) selection of the CUBA attribute to
-        use. ``kind`` can be one of the {'point', 'particles',
-        'nodes', 'elements', 'bonds'}
+     select : tuple(CUBA, kind)
+         The (CUBA, kind) selection of the CUBA attribute to
+         use. ``kind`` can be one of the {'point', 'particles',
+         'nodes', 'elements', 'bonds'}
 
     """
     with loaded_in_paraview(cuds) as source:
