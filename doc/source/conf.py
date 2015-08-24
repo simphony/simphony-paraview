@@ -49,7 +49,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
-    'sectiondoc']
+    'sectiondoc.styles.legacy']
 
 templates_path = ['_templates']
 source_suffix = '.rst'
