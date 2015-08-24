@@ -1,8 +1,19 @@
+import enum
 from collections import defaultdict
 
+import numpy
 from paraview import vtk
 from paraview import vtkConstants
 from paraview.vtk import io
+
+from .cuba_utils import supported_cuba, default_cuba_value
+
+
+class VALUETYPES(enum.IntEnum):
+
+    SCALAR = 0
+    VECTOR = 1
+    STRING = 2
 
 
 def points2edge():
@@ -31,8 +42,22 @@ def points2cell():
 
 
 def dataset2writer():
-    """ Return a mapping from dataset type to writer instances """
+    """ Return a mapping from dataset type to writer instances. """
     return {
         vtkConstants.VTK_UNSTRUCTURED_GRID: io.vtkUnstructuredGridWriter,
         vtkConstants.VTK_STRUCTURED_POINTS: io.vtkStructuredPointsWriter,
         vtkConstants.VTK_POLY_DATA: io.vtkPolyDataWriter}
+
+
+def cuba_value_types():
+    """ Return a mapping from CUBA to VALUETYPE. """
+    types = {}
+    for cuba in supported_cuba():
+        default = default_cuba_value(cuba)
+        if isinstance(default, (float, int, long)):
+            types[cuba] = VALUETYPES.SCALAR
+        elif isinstance(default, str):
+            types[cuba] = VALUETYPES.STRING
+        elif isinstance(default, numpy.ndarray):
+            types[cuba] = VALUETYPES.VECTOR
+    return types

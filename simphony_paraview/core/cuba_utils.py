@@ -23,26 +23,6 @@ def supported_cuba():
     return supported
 
 
-class VALUETYPES(enum.IntEnum):
-
-    SCALAR = 0
-    VECTOR = 1
-    STRING = 2
-
-
-def cuba_value_types():
-    types = {}
-    for cuba in supported_cuba():
-        default = default_cuba_value(cuba)
-        if isinstance(default, (float, int, long)):
-            types[cuba] = VALUETYPES.SCALAR
-        elif isinstance(default, str):
-            types[cuba] = VALUETYPES.STRING
-        elif isinstance(default, numpy.ndarray):
-            types[cuba] = VALUETYPES.VECTOR
-    return types
-
-
 def default_cuba_value(cuba):
     """ Return the default value of the CUBA key as a scalar or numpy array.
 
