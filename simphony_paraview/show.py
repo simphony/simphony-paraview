@@ -38,36 +38,25 @@ def show(cuds, select=None, testing=None):
 
         representation = CreateRepresentation(source, view)
 
+        items = None if select is None else select[1]
         message = "Container does not have: {}"
-
         if isinstance(cuds, ABCLattice):
             representation.Representation = "Points"
-            if select is not None:
-                items = select[1]
-                if items == 'nodes':
-                    set_data(representation, source, select)
-                else:
-                    raise ValueError(message.format(items))
+            if items not in (None, 'nodes'):
+                raise ValueError(message.format(items))
         elif isinstance(cuds, ABCParticles):
             sphere = Sphere(Radius=typical_distance(source))
             glyphs = Glyph(Input=source, ScaleMode='off', GlyphType=sphere)
-            glyph_representation = CreateRepresentation(glyphs, view)
-            if select is not None:
-                items = select[1]
-                if items == 'particles':
-                    set_data(glyph_representation, source, select)
-                elif items == 'bonds':
-                    set_data(representation, source, select)
-                else:
-                    raise ValueError(message.format(items))
+            representation = CreateRepresentation(glyphs, view)
+            if items not in (None, 'particles', 'bonds'):
+                raise ValueError(message.format(items))
         elif isinstance(cuds, ABCMesh):
             representation.Representation = "Surface"
-            if select is not None:
-                items = select[1]
-                if items == 'points' or items == 'elements':
-                    set_data(representation, source, select)
-                else:
-                    raise ValueError(message.format(items))
+            if items not in (None, 'points', 'elements'):
+                raise ValueError(message.format(items))
+
+        if select is not None:
+            set_data(representation, source, select)
 
         interactor = vtkRenderWindowInteractor()
         interactor.SetInteractorStyle(vtkInteractorStyleSwitch())
@@ -79,9 +68,10 @@ def show(cuds, select=None, testing=None):
             handler = Handler(testing, timerid)
             interactor.AddObserver('TimerEvent', handler)
         try:
-            view.ResetCamera()
             camera = view.GetActiveCamera()
             camera.Elevation(45)
+            camera.Yaw(45)
+            view.ResetCamera()
             view.StillRender()
             interactor.Start()
         finally:
