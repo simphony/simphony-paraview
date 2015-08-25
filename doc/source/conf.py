@@ -25,8 +25,7 @@ def mock_modules():
         mock_type: type(mock_type, bases, {'__module__': path})
         for path, mock_type, bases in MOCK_TYPES}
 
-    class Mock(MagicMock):
-
+    class DocMock(object):
 
         def __init__(self, *args, **kwds):
             if '__doc_mocked_name__' in kwds:
