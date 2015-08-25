@@ -14,7 +14,7 @@ def show(cuds, select=None, testing=None):
 
     Parameters
     ----------
-    cuds : {ABCLattice, ABCMesh, ABCParticles}
+    cuds :
         A top level cuds object (e.g. a mesh). The method will detect
         the type of object and create the appropriate visualisation.
 
@@ -79,7 +79,7 @@ def show(cuds, select=None, testing=None):
 
 
 class Handler(object):
-    """ Hepler class to hold the callback to execute on timer event.
+    """ Helper class to hold the callback to execute on timer event.
 
     """
 

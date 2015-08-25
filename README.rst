@@ -2,7 +2,7 @@ Simphony-Paraview
 =================
 
 A plugin-library for the Simphony framework (http://www.simphony-project.eu/) to provide
-visualization support of the CUDS highlevel components.
+visualization support (using http://www.paraview.org/) of the CUDS highlevel components.
 
 .. image:: https://travis-ci.org/simphony/simphony-paraview.svg?branch=master
   :target: https://travis-ci.org/simphony/simphony-paraview
@@ -24,8 +24,9 @@ Simphony-paraview is hosted on github: https://github.com/simphony/simphony-para
 Requirements
 ------------
 
-- paraview >= 3.14.1
+- paraview >= 3.14.1 (official Ubuntu 12.04 package)
 - simphony >= 0.2.0
+
 
 Optional requirements
 ~~~~~~~~~~~~~~~~~~~~~
@@ -33,10 +34,10 @@ Optional requirements
 To support the documentation built you need the following packages:
 
 - sphinx >= 1.2.3
-- sectiondoc commit 8a0c2be, https://github.com/enthought/sectiondoc
+- sectiondoc https://github.com/enthought/sectiondoc
 - mock
 
-Alternative running :command:`pip install -r doc_requirements` should install the
+Alternative running :command:`pip install -r doc_requirements.txt` should install the
 minimum necessary components for the documentation built.
 
 Installation
@@ -80,13 +81,19 @@ After installation the user should be able to import the ``paraview`` visualizat
   from simphony.visualization import paraview_tools
   paraview_tools.show(cuds)
 
+Known Issues
+------------
+
+- Intermittent segfault when running the test-suite (#22)
+- Pressing `a` while interacting with a view causes a segfault (#23)
+- An Empty window appears when using the snapshot function (#24)
+
 
 Directory structure
 -------------------
 
-There are four subpackages:
-
 - simphony-paraview -- Main package code.
+  - core -- Utilities and basic conversion tools.
 - examples -- Holds examples of visualizing simphony objects with simphony-paraview.
 - doc -- Documentation related files:
 

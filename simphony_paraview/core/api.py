@@ -1,8 +1,9 @@
 from .iterators import iter_cells, iter_grid_cells
 from .cuba_data_accumulator import CUBADataAccumulator
-from .cuba_utils import (
-    supported_cuba, cuba_value_types, default_cuba_value, VALUETYPES)
-from .constants import points2edge, points2face, points2cell, dataset2writer
+from .cuba_utils import supported_cuba, default_cuba_value
+from .constants import (
+    points2edge, points2face, points2cell, dataset2writer,
+    cuba_value_types, VALUETYPES)
 from .paraview_utils import (
     write_to_file, loaded_in_paraview, typical_distance, set_data)
 
