@@ -12,10 +12,10 @@ visualization support (using http://www.paraview.org/) of the CUDS highlevel com
   :target: http://codecov.io/github/simphony/simphony-paraview?branch=master
   :alt: Test coverage
 
-.. image:: https://readthedocs.org/projects/simphony-paraview/badge/?version=master
+. image:: https://readthedocs.org/projects/simphony-paraview/badge/?version=master
   :target: https://readthedocs.org/projects/simphony-paraview/?badge=master
   :alt: Documentation Status
-
+  
 Repository
 ----------
 
