@@ -6,6 +6,7 @@ from simphony.core.keywords import KEYWORDS
 
 
 def supported_cuba():
+    """ Return a set off currently supported CUBA keys. """
     supported = set()
     message = 'property {} is currently ignored'
     for cuba in CUBA:
