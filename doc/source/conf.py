@@ -12,6 +12,12 @@ def mock_modules():
     MOCK_MODULES = []
     MOCK_TYPES = []
 
+    try:
+        import paraview  # noqa
+    except ImportError:
+        MOCK_MODULES.extend((
+            'paraview', 'paraview.simple', 'paraview.servermanager', 'paraview.numpy_support', 'paraview.vtk', 'vtkRenderingPython'))
+
     class Mock(MagicMock):
 
         TYPES = {
