@@ -2,7 +2,7 @@ Simphony-Paraview
 =================
 
 A plugin-library for the Simphony framework (http://www.simphony-project.eu/) to provide
-visualization support of the CUDS highlevel components.
+visualization support (using http://www.paraview.org/) of the CUDS highlevel components.
 
 .. image:: https://travis-ci.org/simphony/simphony-paraview.svg?branch=master
   :target: https://travis-ci.org/simphony/simphony-paraview
