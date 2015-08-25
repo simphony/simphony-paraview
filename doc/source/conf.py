@@ -50,7 +50,7 @@ def mock_modules():
             return '<DocMock.{}>'.format(self.__name__)
 
     sys.modules.update(
-        (mod_name, Mock(mocked_name=mod_name)) for mod_name in MOCK_MODULES)
+        (mod_name, DocMock(mocked_name=mod_name)) for mod_name in MOCK_MODULES)
     print 'mocking modules {} and types {}'.format(MOCK_MODULES, MOCK_TYPES)
 
 # -- General configuration ------------------------------------------------
