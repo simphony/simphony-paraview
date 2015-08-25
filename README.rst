@@ -37,7 +37,7 @@ To support the documentation built you need the following packages:
 - sectiondoc https://github.com/enthought/sectiondoc
 - mock
 
-Alternative running :command:`pip install -r doc_requirements` should install the
+Alternative running :command:`pip install -r doc_requirements.txt` should install the
 minimum necessary components for the documentation built.
 
 Installation
@@ -85,9 +85,8 @@ After installation the user should be able to import the ``paraview`` visualizat
 Directory structure
 -------------------
 
-There are four subpackages:
-
 - simphony-paraview -- Main package code.
+  - core -- Utilities and basic conversion tools.
 - examples -- Holds examples of visualizing simphony objects with simphony-paraview.
 - doc -- Documentation related files:
 
