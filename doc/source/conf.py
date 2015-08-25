@@ -38,7 +38,7 @@ def mock_modules():
             if name in ('__file__', '__path__'):
                 return '/dev/null'
             else:
-                return DocMock.TYPES.get(name, DocMock(__docmock_name__=name))
+                return TYPES.get(name, DocMock(__docmock_name__=name))
 
         def __call__(self, *args, **kwards):
             return DocMock()
