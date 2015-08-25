@@ -79,7 +79,7 @@ def show(cuds, select=None, testing=None):
 
 
 class Handler(object):
-    """ Hepler class to hold the callback to execute on timer event.
+    """ Helper class to hold the callback to execute on timer event.
 
     """
 
