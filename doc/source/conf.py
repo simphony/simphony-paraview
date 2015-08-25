@@ -7,8 +7,6 @@ import sys
 
 def mock_modules():
 
-    from mock import MagicMock
-
     MOCK_MODULES = []
     MOCK_TYPES = []
 
@@ -16,27 +14,41 @@ def mock_modules():
         import paraview  # noqa
     except ImportError:
         MOCK_MODULES.extend((
-            'paraview', 'paraview.simple', 'paraview.servermanager', 'paraview.numpy_support', 'paraview.vtk', 'vtkRenderingPython'))
+            'paraview',
+            'paraview.simple',
+            'paraview.servermanager',
+            'paraview.numpy_support',
+            'paraview.vtk',
+            'vtkRenderingPython'))
+
+    TYPES = {
+        mock_type: type(mock_type, bases, {'__module__': path})
+        for path, mock_type, bases in MOCK_TYPES}
 
     class Mock(MagicMock):
 
-        TYPES = {
-            mock_type: type(mock_type, bases, {'__module__': path})
-            for path, mock_type, bases in MOCK_TYPES}
 
-        @classmethod
+        def __init__(self, *args, **kwds):
+            if '__doc_mocked_name__' in kwds:
+                self.__docmock_name__ = kwds['__docmocked_name__']
+            else:
+                self.__docmock_name__ = 'Unknown'
+
         def __getattr__(self, name):
             if name in ('__file__', '__path__'):
                 return '/dev/null'
             else:
-                return Mock.TYPES.get(name, Mock(mocked_name=name))
+                return DocMock.TYPES.get(name, DocMock(__docmock_name__=name))
 
         def __call__(self, *args, **kwards):
-            return Mock()
+            return DocMock()
 
         @property
         def __name__(self):
-            return self.mocked_name
+            return self.__docmock_name__
+
+        def __repr__(self):
+            return '<DocMock.{}>'.format(self.__name__)
 
     sys.modules.update(
         (mod_name, Mock(mocked_name=mod_name)) for mod_name in MOCK_MODULES)
