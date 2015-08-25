@@ -81,6 +81,13 @@ After installation the user should be able to import the ``paraview`` visualizat
   from simphony.visualization import paraview_tools
   paraview_tools.show(cuds)
 
+Known Issues
+------------
+
+- Intermittent segfault when running the test-suite (#22)
+- Pressing `a` while interacting with a view causes a segfault (#23)
+- An Empty window appears when using the snapshot function (#24)
+
 
 Directory structure
 -------------------
