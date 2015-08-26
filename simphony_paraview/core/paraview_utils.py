@@ -11,6 +11,7 @@ from paraview.simple import (
 
 from .cuds2vtk import cuds2vtk
 from .constants import dataset2writer
+from .compatibility import set_input
 
 
 @contextlib.contextmanager
@@ -47,7 +48,7 @@ def write_to_file(cuds, filename):
     kind = data_set.GetDataObjectType()
     writer = dataset2writer()[kind]()
     writer.SetFileName(filename)
-    writer.SetInput(data_set)
+    set_input(writer, data_set)
     writer.Write()
 
 

@@ -4,7 +4,10 @@ from collections import defaultdict
 import numpy
 from paraview import vtk
 from paraview import vtkConstants
-from paraview.vtk import io
+from .compatibility import (
+    vtkUnstructuredGridWriter,
+    vtkStructuredPointsWriter,
+    vtkPolyDataWriter)
 
 from .cuba_utils import supported_cuba, default_cuba_value
 
@@ -44,9 +47,9 @@ def points2cell():
 def dataset2writer():
     """ Return a mapping from dataset type to writer instances. """
     return {
-        vtkConstants.VTK_UNSTRUCTURED_GRID: io.vtkUnstructuredGridWriter,
-        vtkConstants.VTK_STRUCTURED_POINTS: io.vtkStructuredPointsWriter,
-        vtkConstants.VTK_POLY_DATA: io.vtkPolyDataWriter}
+        vtkConstants.VTK_UNSTRUCTURED_GRID: vtkUnstructuredGridWriter,
+        vtkConstants.VTK_STRUCTURED_POINTS: vtkStructuredPointsWriter,
+        vtkConstants.VTK_POLY_DATA: vtkPolyDataWriter}
 
 
 def cuba_value_types():

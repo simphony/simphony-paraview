@@ -1,12 +1,12 @@
 from paraview.simple import Glyph, Sphere
 from paraview.servermanager import CreateRenderView
-from vtkRenderingPython import (
-    vtkRenderWindowInteractor, vtkInteractorStyleSwitch)
 from simphony.cuds import ABCMesh, ABCLattice, ABCParticles
 
 from simphony_paraview.core.api import (
     loaded_in_paraview, typical_distance, set_data)
 from simphony_paraview.core.fixes import CreateRepresentation
+from simphony_paraview.core.compatibility import (
+    vtkRenderWindowInteractor, vtkInteractorStyleSwitch)
 
 
 def show(cuds, select=None, testing=None):
