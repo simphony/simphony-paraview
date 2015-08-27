@@ -85,7 +85,7 @@ Known Issues
 ------------
 
 - Intermittent segfault when running the test-suite (#22)
-- Pressing `a` while interacting with a view causes a segfault (#23)
+- Pressing :kbd:`a` while interacting with a view causes a segfault (#23)
 - An Empty window appears when using the snapshot function (#24)
 
 
