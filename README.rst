@@ -24,7 +24,7 @@ Simphony-paraview is hosted on github: https://github.com/simphony/simphony-para
 Requirements
 ------------
 
-- paraview >= 3.14.1 (official Ubuntu 12.04 package)
+- paraview >= 3.14.1 (tested on official Ubuntu 12.04 3.14.1 package and paraview openfoam 4.1.0)
 - simphony >= 0.2.0
 
 
