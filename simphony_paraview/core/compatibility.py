@@ -19,7 +19,7 @@ elif paraview_major == 4:
         vtkRenderWindowInteractor,
         vtkInteractorStyleSwitch)
 else:
-    message = 'Cannot work work with paraview {}'.format(paraview_major)
+    message = 'Cannot work with paraview {}'.format(paraview_major)
     raise ImportError(message)
 
 
