@@ -18,29 +18,29 @@ window containing a 3D view of the dataset. Interaction is supported
 using the mouse and keyboard:
 
 :keyboard:
-  - **j** / **t**: toggle between joystick (position sensitive) and
+  - :kbd:`j` / :kbd:`t`: toggle between joystick (position sensitive) and
     trackball (motion sensitive) styles. In joystick style, motion
     occurs continuously as long as a mouse button is pressed. In
     trackball style, motion occurs when the mouse button is pressed
     and the mouse pointer moves.
 
-  - **3**: toggle the render window into and out of stereo mode. By
+  - :kbd:`3`: toggle the render window into and out of stereo mode. By
     default, red-blue stereo pairs are created.
 
-  - **e**: exit the application.
+  - :kbd:`e`: exit the application.
 
-  - **f**: fly to the picked point
+  - :kbd:`f`: fly to the picked point
 
-  - **p**: perform a pick operation.
+  - :kbd:`p`: perform a pick operation.
 
-  - **r**: reset the camera view along the current view
+  - :kbd:`r`: reset the camera view along the current view
     direction. Centers the actors and moves the camera so that all
     actors are visible.
 
-  - **s**: modify the representation of all actors so that they are
+  - :kbd:`s`: modify the representation of all actors so that they are
     surfaces.
 
-  - **w**: modify the representation of all actors so that they are
+  - :kbd:`w`: modify the representation of all actors so that they are
     wireframe.
 
 :mouse:
