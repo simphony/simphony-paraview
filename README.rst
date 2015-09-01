@@ -138,7 +138,9 @@ Directory structure
 -------------------
 
 - simphony-paraview -- Main package code.
+
   - core -- Utilities and basic conversion tools.
+  
 - examples -- Holds examples of visualizing simphony objects with simphony-paraview.
 - doc -- Documentation related files:
 
