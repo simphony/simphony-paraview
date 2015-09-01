@@ -29,7 +29,7 @@ Requirements
 
 
 ``simphony-paraview`` is known to work with paraview 3.14.1 (official)
-and paraview 4.1.0 (paravieweopenfoam) on Ubuntu 12.04
+and paraview 4.1.0 (paraviewopenfoam) on Ubuntu 12.04
 (precise). Installation instructions are provided below.
 
 .. rubric:: Paraview 3.14.1
