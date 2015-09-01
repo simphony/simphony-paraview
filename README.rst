@@ -32,17 +32,21 @@ Requirements
 and paraview 4.1.0 (paraviewopenfoam) on Ubuntu 12.04
 (precise). Installation instructions are provided below.
 
-.. rubric:: Paraview 3.14.1
+Paraview 3.14.1
+~~~~~~~~~~~~~~~
 
-   ::
-      sudo apt-get install paraview
+::
 
-.. rubric:: ParaviewOpenFoam 4.1.0
+  sudo apt-get install paraview
 
-   ::
-      sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
-      sudo apt-get update
-      sudo apt-get paraviewopenfoam410
+ParaviewOpenFoam 4.1.0
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+  sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
+  sudo apt-get update
+  sudo apt-get paraviewopenfoam410
 
 
 
