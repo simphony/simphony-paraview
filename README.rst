@@ -46,7 +46,7 @@ ParaviewOpenFoam 4.1.0
 
   sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
   sudo apt-get update
-  sudo apt-get paraviewopenfoam410
+  sudo apt-get install paraviewopenfoam410
 
 
 
