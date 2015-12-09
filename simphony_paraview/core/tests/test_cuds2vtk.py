@@ -10,8 +10,8 @@ from simphony.core.cuba import CUBA
 from simphony.cuds import (
     Particle, Bond, Particles, Mesh, Point, Edge, Cell, Face)
 from simphony.cuds.lattice import (
-    make_hexagonal_lattice, make_cubic_lattice, make_square_lattice,
-    make_rectangular_lattice, make_orthorombicp_lattice)
+    make_hexagonal_lattice, make_cubic_lattice,
+    make_orthorhombic_lattice)
 from simphony.testing.utils import (
     compare_data_containers, compare_particles, compare_bonds, compare_points)
 
@@ -104,37 +104,10 @@ class TestCUDS2VTK(unittest.TestCase):
             vtk_to_numpy(arrays['TEMPERATURE']),
             [bond_temperature[int(index)] for index in mass])
 
-    def test_source_from_a_xy_plane_square_lattice(self):
-        # given
-        shape = 2, 4
-        lattice = make_square_lattice(
-            'test', 0.2, (2, 4), origin=(0.2, -2.4, 0.0))
-        self.add_velocity(lattice)
-
-        # when
-        data_set = cuds2vtk(cuds=lattice)
-
-        # then
-        self.assertEqual(data_set.GetNumberOfPoints(), numpy.prod(shape))
-        assert_array_equal(data_set.GetOrigin(), (0.2, -2.4, 0.0))
-
-        point_data = data_set.GetPointData()
-        arrays = {
-            point_data.GetArray(index).GetName():
-            vtk_to_numpy(point_data.GetArray(index))
-            for index in range(point_data.GetNumberOfArrays())}
-        for node in lattice.iter_nodes():
-            point_id = data_set.ComputePointId(node.index)
-            assert_array_equal(
-                lattice.get_coordinate(node.index),
-                data_set.GetPoint(point_id))
-            for key, value in node.data.iteritems():
-                assert_array_equal(arrays[key.name][point_id], value)
-
     def test_source_from_a_xy_plane_rectangular_lattice(self):
         # given
-        lattice = make_rectangular_lattice(
-            'test', (0.3, 0.35), (13, 23), origin=(0.2, -2.7, 0.0))
+        lattice = make_orthorhombic_lattice(
+            'test', (0.3, 0.35, 0.4), (13, 23, 1), origin=(0.2, -2.7, 0.0))
         self.add_velocity(lattice)
 
         # when
@@ -182,9 +155,9 @@ class TestCUDS2VTK(unittest.TestCase):
             for key, value in node.data.iteritems():
                 assert_array_equal(arrays[key.name][point_id], value)
 
-    def test_source_from_an_orthorombic_p_lattice(self):
+    def test_source_from_an_orthorhombic_lattice(self):
         # given
-        lattice = make_orthorombicp_lattice(
+        lattice = make_orthorhombic_lattice(
             'test',  (0.5, 0.54, 0.58), (15, 25, 35), (7, 9, 8))
         self.add_velocity(lattice)
 
@@ -210,7 +183,7 @@ class TestCUDS2VTK(unittest.TestCase):
 
     def test_source_from_a_xy_plane_hexagonal_lattice(self):
         # given
-        lattice = make_hexagonal_lattice('test', 0.1, (5, 4))
+        lattice = make_hexagonal_lattice('test', 0.1, 0.2, (5, 4, 1))
         self.add_velocity(lattice)
 
         # when
@@ -218,7 +191,6 @@ class TestCUDS2VTK(unittest.TestCase):
 
         # then
         self.assertEqual(data_set.GetNumberOfPoints(), 5 * 4)
-        xspace, yspace, _ = lattice.base_vect
 
         points = vtk_to_numpy(data_set.GetPoints().GetData())
         for node in lattice.iter_nodes():
