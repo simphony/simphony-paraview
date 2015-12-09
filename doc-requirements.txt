@@ -1,2 +1,2 @@
-git+https://github.com/simphony/simphony-common.git@0.2.0#egg=simphony
+git+https://github.com/simphony/simphony-common.git@0.2.2#egg=simphony
 git+https://github.com/enthought/sectiondoc.git#egg=sectiondoc
