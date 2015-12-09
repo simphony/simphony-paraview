@@ -3,6 +3,7 @@ from itertools import izip
 import numpy
 from paraview import vtk
 from simphony.cuds import ABCMesh, ABCParticles, ABCLattice
+from simphony.cuds.primitive_cell import BravaisLattice
 
 from .cuba_data_accumulator import CUBADataAccumulator
 from .constants import points2edge, points2face, points2cell
@@ -16,11 +17,12 @@ def cuds2vtk(cuds):
     elif isinstance(cuds, ABCParticles):
         data_set = _particles2poly_data(cuds)
     elif isinstance(cuds, ABCLattice):
-        lattice_type = cuds.type
+        lattice_type = cuds.primitive_cell.bravais_lattice
         if lattice_type in (
-                'Cubic', 'OrthorombicP', 'Square', 'Rectangular'):
+                BravaisLattice.CUBIC, BravaisLattice.TETRAGONAL,
+                BravaisLattice.ORTHORHOMBIC):
             data_set = _lattice2structured_points(cuds)
-        elif lattice_type == 'Hexagonal':
+        else:
             data_set = _lattice2poly_data(cuds)
     else:
         msg = 'Provided object {} is not of any known cuds container types'
@@ -58,7 +60,15 @@ def _particles2poly_data(cuds):
 def _lattice2structured_points(cuds):
     origin = cuds.origin
     size = cuds.size
-    spacing = cuds.base_vect
+
+    primitive_cell = cuds.primitive_cell
+    p1, p2, p3 = primitive_cell.p1, primitive_cell.p2, primitive_cell.p3
+
+    def vector_length(vector):
+        '''length of a vector'''
+        return numpy.sqrt(numpy.dot(vector, vector))
+
+    spacing = tuple(map(vector_length, (p1, p2, p3)))
 
     structured_points = vtk.vtkStructuredPoints()
     structured_points.SetSpacing(spacing)
