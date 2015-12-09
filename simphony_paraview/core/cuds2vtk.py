@@ -63,6 +63,7 @@ def _lattice2structured_points(cuds):
 
     primitive_cell = cuds.primitive_cell
     p1, p2, p3 = primitive_cell.p1, primitive_cell.p2, primitive_cell.p3
+
     def vector_length(vector):
         '''length of a vector'''
         return numpy.sqrt(numpy.dot(vector, vector))
