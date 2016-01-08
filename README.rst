@@ -25,7 +25,7 @@ Requirements
 ------------
 
 - paraview >= 3.14.1
-- simphony >= 0.2.1, <0.3
+- simphony >= 0.2.1
 
 
 ``simphony-paraview`` is known to work with paraview 3.14.1 (official)
