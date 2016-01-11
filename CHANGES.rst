@@ -1,6 +1,11 @@
 SimPhoNy-Paraview CHANGELOG
 ===========================
 
+Release 0.2.0
+-------------
+
+- Support simphony-common 0.2.1, 0.2.2
+
 Release 0.1.1
 -------------
 
