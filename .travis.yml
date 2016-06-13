@@ -15,6 +15,8 @@ matrix:
 before_install:
   - sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
   - sudo apt-get update -qq
+  # cloud init requires additional user input which halts the travis build.
+  - sudo apt-mark hold cloud-init
   - sudo apt-get upgrade -yy --force-yes
   - sudo apt-get install -y --force-yes ${PARAVIEW} python-imaging
   - pip install -r dev-requirements.txt
