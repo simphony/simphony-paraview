@@ -11,7 +11,7 @@ env:
 
 matrix:
   allow_failures:
-    - env: SIMPHONY_VERSION=master
+    - env: SIMPHONY_VERSION=master PARAVIEW=paraview
 before_install:
   - sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
   - sudo apt-get update -qq
