@@ -5,8 +5,8 @@ python:
 virtualenv:
   system_site_packages: true
 env:
-  - SIMPHONY_VERSION=0.2.2 PARAVIEW=paraview
-  - SIMPHONY_VERSION=0.2.2 PARAVIEW=paraviewopenfoam410
+  - SIMPHONY_VERSION=0.3.0 PARAVIEW=paraview
+  - SIMPHONY_VERSION=0.3.0 PARAVIEW=paraviewopenfoam410
   - SIMPHONY_VERSION=master
 
 matrix:
