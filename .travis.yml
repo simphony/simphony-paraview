@@ -15,6 +15,9 @@ matrix:
 before_install:
   - sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
   - sudo apt-get update -qq
+  # cloud init requires additional user input which halts the travis build.
+  - sudo apt-mark hold cloud-init
+  - sudo apt-get upgrade -yy --force-yes
   - sudo apt-get install -y --force-yes ${PARAVIEW} python-imaging
   - pip install -r dev-requirements.txt
   - pip install -r test-requirements.txt
@@ -23,7 +26,7 @@ install:
   - python setup.py develop
 before_script:
   - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+  - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/cucumber_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x768x24
   - if [[ $PARAVIEW == "paraviewopenfoam410" ]]; then source ./setup_openfoamparaview.sh; fi
 script:
   - flake8 .
