@@ -15,11 +15,11 @@ before_install:
   - sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
   - sudo apt-get update -qq
   # cloud init requires additional user input which halts the travis build.
-  - sudo apt-mark hold cloud-init
+  - sudo apt-mark hold cloud-init postgresql-9.2 postgresql-9.3 postgresql-9.4 postgresql-contrib-9.2 postgresql-contrib-9.3 postgresql-contrib-9.4
   # The upgrade can produce errors (e.g. with multiple postgres versions). 
   # Travis used to ignore them but now it doesn't, so we add a || true
-  - sudo apt-get upgrade -y --force-yes -o Dpkg::Options::="--force-confold" || true
-  - sudo apt-get install -y --force-yes ${PARAVIEW} python-imaging || true
+  - sudo apt-get upgrade -y --force-yes -o Dpkg::Options::="--force-confold" 
+  - sudo apt-get install -y --force-yes ${PARAVIEW} python-imaging 
   - pip install -r dev-requirements.txt
   - pip install -r test-requirements.txt
   - pip install git+https://github.com/simphony/simphony-common.git@${SIMPHONY_VERSION}#egg=simphony
