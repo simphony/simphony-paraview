@@ -1,6 +1,4 @@
 language: python
-addons:
-  postgresql: "9.1"
 python:
   - "2.7"
 virtualenv:
@@ -20,8 +18,8 @@ before_install:
   - sudo apt-mark hold cloud-init
   # The upgrade can produce errors (e.g. with multiple postgres versions). 
   # Travis used to ignore them but now it doesn't, so we add a || true
-  - sudo apt-get upgrade -yy --force-yes -o Dpkg::Options::="--force-confold" || true
-  - sudo apt-get install -y --force-yes ${PARAVIEW} python-imaging
+  - sudo apt-get upgrade -y --force-yes -o Dpkg::Options::="--force-confold" || true
+  - sudo apt-get install -y --force-yes ${PARAVIEW} python-imaging || true
   - pip install -r dev-requirements.txt
   - pip install -r test-requirements.txt
   - pip install git+https://github.com/simphony/simphony-common.git@${SIMPHONY_VERSION}#egg=simphony
