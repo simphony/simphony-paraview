@@ -18,7 +18,9 @@ before_install:
   - sudo apt-get update -qq
   # cloud init requires additional user input which halts the travis build.
   - sudo apt-mark hold cloud-init
-  - sudo apt-get upgrade -yy --force-yes -o Dpkg::Options::="--force-confold"
+  # The upgrade can produce errors (e.g. with multiple postgres versions). 
+  # Travis used to ignore them but now it doesn't, so we add a || true
+  - sudo apt-get upgrade -yy --force-yes -o Dpkg::Options::="--force-confold" || true
   - sudo apt-get install -y --force-yes ${PARAVIEW} python-imaging
   - pip install -r dev-requirements.txt
   - pip install -r test-requirements.txt
