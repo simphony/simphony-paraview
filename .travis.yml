@@ -17,7 +17,7 @@ before_install:
   - sudo apt-get update -qq
   # cloud init requires additional user input which halts the travis build.
   - sudo apt-mark hold cloud-init
-  - sudo apt-get upgrade -yy --force-yes
+  - sudo apt-get upgrade -yy --force-yes -o Dpkg::Options::="--force-confold"
   - sudo apt-get install -y --force-yes ${PARAVIEW} python-imaging
   - pip install -r dev-requirements.txt
   - pip install -r test-requirements.txt
