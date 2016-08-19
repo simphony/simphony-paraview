@@ -4,13 +4,13 @@ python:
 virtualenv:
   system_site_packages: true
 env:
-  - SIMPHONY_VERSION=0.2.2 PARAVIEW=paraview
-  - SIMPHONY_VERSION=0.2.2 PARAVIEW=paraviewopenfoam410
-  - SIMPHONY_VERSION=master
+  - SIMPHONY_VERSION=0.3.0 PARAVIEW=paraview
+  - SIMPHONY_VERSION=0.3.0 PARAVIEW=paraviewopenfoam410
+  - SIMPHONY_VERSION=master PARAVIEW=paraview
 
 matrix:
   allow_failures:
-    - env: SIMPHONY_VERSION=master
+    - env: SIMPHONY_VERSION=master PARAVIEW=paraview
 before_install:
   - sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
   - sudo apt-get update -qq
