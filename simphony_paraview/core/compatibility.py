@@ -10,7 +10,7 @@ if paraview_major == 3:
         vtkPolyDataWriter)
     from vtkRenderingPython import (
         vtkRenderWindowInteractor,
-        vtkInteractorStyleJoystickCamera)
+        vtkInteractorStyleSwitch)
 elif paraview_major == 4:
     # Paraview 4 ships with vtk6.
     # Make sure that PYTHONPATH points to the correct path
@@ -22,7 +22,7 @@ elif paraview_major == 4:
     from vtkRenderingCorePython import (
         vtkRenderWindowInteractor)
     from vtkInteractionStylePython import (
-        vtkInteractorStyleJoystickCamera)
+        vtkInteractorStyleSwitch)
 else:
     message = 'Cannot work with paraview {}'.format(paraview_major)
     raise ImportError(message)
@@ -44,4 +44,4 @@ __all__ = [
     'vtkStructuredPointsWriter',
     'vtkPolyDataWriter',
     'vtkRenderWindowInteractor',
-    'vtkInteractorStyleJoystickCamera']
+    'vtkInteractorStyleSwitch']
