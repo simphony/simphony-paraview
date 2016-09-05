@@ -6,7 +6,7 @@ from simphony_paraview.core.api import (
     loaded_in_paraview, typical_distance, set_data)
 from simphony_paraview.core.fixes import CreateRepresentation
 from simphony_paraview.core.compatibility import (
-    vtkRenderWindowInteractor, vtkInteractorStyleSwitch)
+    vtkRenderWindowInteractor, vtkInteractorStyleJoystickCamera)
 
 
 def show(cuds, select=None, testing=None):
@@ -59,7 +59,11 @@ def show(cuds, select=None, testing=None):
             set_data(representation, source, select)
 
         interactor = vtkRenderWindowInteractor()
-        interactor.SetInteractorStyle(vtkInteractorStyleSwitch())
+        # Note: we cannot use any interactor style supporting manipulation
+        # of actors. The reason is that something in the chain of
+        # responsibility # is incorrectly setup to refer to the actors.
+        # See issue https://github.com/simphony/simphony-paraview/issues/23
+        interactor.SetInteractorStyle(vtkInteractorStyleJoystickCamera())
         interactor.SetRenderWindow(view.GetRenderWindow())
         interactor.Initialize()
 
