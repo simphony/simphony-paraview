@@ -12,11 +12,16 @@ if paraview_major == 3:
         vtkRenderWindowInteractor,
         vtkInteractorStyleSwitch)
 elif paraview_major == 4:
-    from vtk import (
+    # Paraview 4 ships with vtk6.
+    # Make sure that PYTHONPATH points to the correct path
+    # for binary modules (e.g. /usr/lib/paraview/).
+    from vtkIOLegacyPython import (
         vtkUnstructuredGridWriter,
         vtkStructuredPointsWriter,
-        vtkPolyDataWriter,
-        vtkRenderWindowInteractor,
+        vtkPolyDataWriter)
+    from vtkRenderingCorePython import (
+        vtkRenderWindowInteractor)
+    from vtkInteractionStylePython import (
         vtkInteractorStyleSwitch)
 else:
     message = 'Cannot work with paraview {}'.format(paraview_major)
