@@ -6,8 +6,9 @@ virtualenv:
 env:
   - SIMPHONY_VERSION=0.3.0 PARAVIEW=paraview
   - SIMPHONY_VERSION=0.3.0 PARAVIEW=paraviewopenfoam410
+  - SIMPHONY_VERSION=8ed81d91dbee89dbdf4a76d55d9b7f92bce773e7 PARAVIEW=paraview
+  - SIMPHONY_VERSION=8ed81d91dbee89dbdf4a76d55d9b7f92bce773e7 PARAVIEW=paraviewopenfoam410
   - SIMPHONY_VERSION=master PARAVIEW=paraview
-
 matrix:
   allow_failures:
     - env: SIMPHONY_VERSION=master PARAVIEW=paraview
