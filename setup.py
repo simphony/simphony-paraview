@@ -98,6 +98,7 @@ if not is_released:
                                  git_revision=git_rev,
                                  is_released=IS_RELEASED))
 
+
 if __name__ == "__main__":
     write_version_py()
     from simphony_paraview import __version__

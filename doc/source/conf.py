@@ -6,7 +6,6 @@ import sys
 
 
 def mock_modules():
-
     MOCK_MODULES = []
     MOCK_TYPES = []
 
@@ -53,8 +52,8 @@ def mock_modules():
         (mod_name, DocMock(mocked_name=mod_name)) for mod_name in MOCK_MODULES)
     print 'mocking modules {} and types {}'.format(MOCK_MODULES, MOCK_TYPES)
 
-# -- General configuration ------------------------------------------------
 
+# -- General configuration ------------------------------------------------
 # check and mock missing modules
 mock_modules()
 
