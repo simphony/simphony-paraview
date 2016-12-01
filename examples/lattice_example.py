@@ -12,6 +12,7 @@ def set_temperature(nodes):
         node.data[CUBA.TEMPERATURE] = numpy.prod(index)
         yield node
 
+
 lattice.update_nodes(set_temperature(lattice.iter_nodes()))
 
 
