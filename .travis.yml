@@ -8,6 +8,10 @@ env:
   - SIMPHONY_VERSION=master PARAVIEW=paraviewopenfoam410
   - SIMPHONY_VERSION=0.5.0 PARAVIEW=paraview
   - SIMPHONY_VERSION=0.5.0 PARAVIEW=paraviewopenfoam410
+matrix:
+    allow_failures:
+        - env: SIMPHONY_VERSION=master PARAVIEW=paraview
+        - env: SIMPHONY_VERSION=master PARAVIEW=paraviewopenfoam410
 before_install:
   - sudo sh -c "echo deb http://www.openfoam.org/download/ubuntu precise main > /etc/apt/sources.list.d/openfoam.list"
   - sudo apt-get update -qq
