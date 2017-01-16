@@ -186,5 +186,4 @@ class CUBADataAccumulator(object):
             array = self[cuba]
             value = data.get(cuba, default)
             temp = numpy.asarray(value)
-            print "XXXX", temp.ravel()
             array.InsertNextTuple(temp.ravel())
