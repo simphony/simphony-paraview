@@ -31,6 +31,12 @@ def default_cuba_value(cuba):
 
     """
     description = KEYWORDS[cuba.name]
+
+    if description.dtype is None:
+        message = 'property {!r} is currently ignored'
+        warnings.warn(message.format(cuba))
+        return
+
     if description.shape == [1]:
         if numpy.issubdtype(description.dtype, numpy.float):
             return numpy.nan

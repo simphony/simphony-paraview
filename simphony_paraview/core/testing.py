@@ -18,7 +18,7 @@ def create_example_lattice():
             node.data[CUBA.TEMPERATURE] = prod(index)
             yield node
 
-    lattice.update_nodes(work_on_nodes(lattice.iter_nodes()))
+    lattice.update(work_on_nodes(lattice.iter(item_type=CUBA.NODE)))
     return lattice
 
 
@@ -39,26 +39,26 @@ def create_example_mesh():
     mesh = Mesh('example')
 
     # add points
-    uids = mesh.add_points(
+    uids = mesh.add(
         Point(coordinates=point, data=DataContainer(TEMPERATURE=index))
         for index, point in enumerate(points))
 
     # add edges
-    mesh.add_edges(
+    mesh.add(
         Edge(
             points=[uids[index] for index in element],
             data=DataContainer(TEMPERATURE=index))
         for index, element in enumerate(edges))
 
     # add faces
-    mesh.add_faces(
+    mesh.add(
         Face(
             points=[uids[index] for index in element],
             data=DataContainer(TEMPERATURE=index))
         for index, element in enumerate(faces))
 
     # add cells
-    mesh.add_cells(
+    mesh.add(
         Cell(
             points=[uids[index] for index in element],
             data=DataContainer(TEMPERATURE=index))
@@ -73,13 +73,13 @@ def create_example_particles():
     temperature = array([10., 20., 30., 40.])
 
     particles = Particles('test')
-    uids = particles.add_particles(
+    uids = particles.add(
         Particle(
             coordinates=point,
             data=DataContainer(TEMPERATURE=temperature[index]))
         for index, point in enumerate(points))
 
-    particles.add_bonds(
+    particles.add(
         Bond(
             particles=[uids[index] for index in indices],
             data=DataContainer(TEMPERATURE=temperature[index]))

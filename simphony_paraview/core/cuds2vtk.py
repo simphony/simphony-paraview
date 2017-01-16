@@ -2,6 +2,7 @@ from itertools import izip
 
 import numpy
 from paraview import vtk
+from simphony.core.cuba import CUBA
 from simphony.cuds import ABCMesh, ABCParticles, ABCLattice
 from simphony.cuds.primitive_cell import BravaisLattice
 
@@ -39,14 +40,14 @@ def _particles2poly_data(cuds):
 
     point_data = poly_data.GetPointData()
     data_collector = CUBADataAccumulator(container=point_data)
-    for index, particle in enumerate(cuds.iter_particles()):
+    for index, particle in enumerate(cuds.iter(item_type=CUBA.PARTICLE)):
         particle2index[particle.uid] = index
         points.InsertPoint(index, *particle.coordinates)
         data_collector.append(particle.data)
 
     cell_data = poly_data.GetCellData()
     data_collector = CUBADataAccumulator(container=cell_data)
-    for bond in cuds.iter_bonds():
+    for bond in cuds.iter(item_type=CUBA.BOND):
         lines.InsertNextCell(len(bond.particles))
         for uuid in bond.particles:
             lines.InsertCellPoint(particle2index[uuid])
@@ -80,7 +81,7 @@ def _lattice2structured_points(cuds):
     indices = izip(x.ravel(), y.ravel(), z.ravel())
     point_data = structured_points.GetPointData()
     data_collector = CUBADataAccumulator(container=point_data)
-    for node in cuds.iter_nodes(indices):
+    for node in cuds.iter(indices):
         data_collector.append(node.data)
 
     return structured_points
@@ -94,7 +95,7 @@ def _lattice2poly_data(cuds):
     # copy node data
     point_data = poly_data.GetPointData()
     data_collector = CUBADataAccumulator(container=point_data)
-    for node in cuds.iter_nodes():
+    for node in cuds.iter(item_type=CUBA.NODE):
         points.InsertNextPoint(coordinates(node.index))
         data_collector.append(node.data)
 
@@ -111,7 +112,7 @@ def _mesh2unstructured_grid(cuds):
     points = vtk.vtkPoints()
     point_data = unstructured_grid.GetPointData()
     data_collector = CUBADataAccumulator(container=point_data)
-    for index, point in enumerate(cuds.iter_points()):
+    for index, point in enumerate(cuds.iter(item_type=CUBA.POINT)):
         point2index[point.uid] = index
         points.InsertNextPoint(*point.coordinates)
         data_collector.append(point.data)
@@ -122,7 +123,7 @@ def _mesh2unstructured_grid(cuds):
 
     # copy edges
     mapping = points2edge()
-    for edge in cuds.iter_edges():
+    for edge in cuds.iter(item_type=CUBA.EDGE):
         npoints = len(edge.points)
         ids = vtk.vtkIdList()
         for uid in edge.points:
@@ -132,7 +133,7 @@ def _mesh2unstructured_grid(cuds):
 
     # copy faces
     mapping = points2face()
-    for face in cuds.iter_faces():
+    for face in cuds.iter(item_type=CUBA.FACE):
         npoints = len(face.points)
         ids = vtk.vtkIdList()
         for uid in face.points:
@@ -142,7 +143,7 @@ def _mesh2unstructured_grid(cuds):
 
     # copy cells
     mapping = points2cell()
-    for cell in cuds.iter_cells():
+    for cell in cuds.iter(item_type=CUBA.CELL):
         npoints = len(cell.points)
         ids = vtk.vtkIdList()
         for uid in cell.points:
