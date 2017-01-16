@@ -39,14 +39,14 @@ class TestCUDS2VTK(unittest.TestCase):
         bond_temperature = [60., 80., 190.]
 
         cuds = Particles('test')
-        particle_uids = cuds.add_particles(
+        particle_uids = cuds.add(
             Particle(
                 coordinates=point,
                 data=DataContainer(
                     TEMPERATURE=point_temperature[index],
                     MASS=index))
             for index, point in enumerate(points))
-        cuds.add_bonds(
+        cuds.add(
             Bond(
                 particles=[particle_uids[uid] for uid in indices],
                 data=DataContainer(
@@ -61,7 +61,8 @@ class TestCUDS2VTK(unittest.TestCase):
         self.assertEqual(data_set.GetNumberOfPoints(), 4)
 
         coordinates = [
-            particle.coordinates for particle in cuds.iter_particles()]
+            particle.coordinates for particle in cuds.iter(
+                item_type=CUBA.PARTICLE)]
         vtk_points = [
             data_set.GetPoint(index)
             for index in range(len(particle_uids))]
@@ -84,8 +85,8 @@ class TestCUDS2VTK(unittest.TestCase):
 
         links = [[
             particle.coordinates
-            for particle in cuds.iter_particles(bond.particles)]
-            for bond in cuds.iter_bonds()]
+            for particle in cuds.iter(bond.particles)]
+            for bond in cuds.iter(item_type=CUBA.BOND)]
         vtk_lines = data_set.GetLines()
         lines = [[
             data_set.GetPoint(index) for index in line]
@@ -122,7 +123,7 @@ class TestCUDS2VTK(unittest.TestCase):
             point_data.GetArray(index).GetName():
             vtk_to_numpy(point_data.GetArray(index))
             for index in range(point_data.GetNumberOfArrays())}
-        for node in lattice.iter_nodes():
+        for node in lattice.iter(item_type=CUBA.NODE):
             point_id = data_set.ComputePointId(node.index)
             assert_array_equal(
                 lattice.get_coordinate(node.index),
@@ -147,7 +148,7 @@ class TestCUDS2VTK(unittest.TestCase):
             point_data.GetArray(index).GetName():
             vtk_to_numpy(point_data.GetArray(index))
             for index in range(point_data.GetNumberOfArrays())}
-        for node in lattice.iter_nodes():
+        for node in lattice.iter(item_type=CUBA.NODE):
             point_id = data_set.ComputePointId(node.index)
             assert_array_equal(
                 lattice.get_coordinate(node.index),
@@ -173,7 +174,7 @@ class TestCUDS2VTK(unittest.TestCase):
             point_data.GetArray(index).GetName():
             vtk_to_numpy(point_data.GetArray(index))
             for index in range(point_data.GetNumberOfArrays())}
-        for node in lattice.iter_nodes():
+        for node in lattice.iter(item_type=CUBA.NODE):
             point_id = data_set.ComputePointId(node.index)
             assert_array_equal(
                 lattice.get_coordinate(node.index),
@@ -193,7 +194,7 @@ class TestCUDS2VTK(unittest.TestCase):
         self.assertEqual(data_set.GetNumberOfPoints(), 5 * 4)
 
         points = vtk_to_numpy(data_set.GetPoints().GetData())
-        for node in lattice.iter_nodes():
+        for node in lattice.iter(item_type=CUBA.NODE):
             position = lattice.get_coordinate(node.index)
             point_id = data_set.FindPoint(position)
             assert_array_equal(
@@ -217,7 +218,7 @@ class TestCUDS2VTK(unittest.TestCase):
             for index, point in enumerate(points)]
 
         cuds = Mesh('test')
-        cuds.add_points(points)
+        cuds.add(points)
 
         faces = [
             Face(
@@ -234,9 +235,9 @@ class TestCUDS2VTK(unittest.TestCase):
                 points=[points[index].uid for index in cell],
                 data=DataContainer(TEMPERATURE=next(count)))
             for cell in cells]
-        cuds.add_edges(edges)
-        cuds.add_faces(faces)
-        cuds.add_cells(cells)
+        cuds.add(edges)
+        cuds.add(faces)
+        cuds.add(cells)
 
         # when
         data_set = cuds2vtk(cuds=cuds)
@@ -265,7 +266,9 @@ class TestCUDS2VTK(unittest.TestCase):
         # find the corresponding cell in the vtkCellArray and
         # verify that they link to points that have the right coordinates.
         for cell in itertools.chain(
-                cuds.iter_edges(), cuds.iter_faces(), cuds.iter_cells()):
+                cuds.iter(item_type=CUBA.EDGE),
+                cuds.iter(item_type=CUBA.FACE),
+                cuds.iter(item_type=CUBA.CELL)):
             # The temperature value is also the index that the cells
             # are expected to have in the vtkCellArray.
             value = cell.data[CUBA.TEMPERATURE]
@@ -273,7 +276,7 @@ class TestCUDS2VTK(unittest.TestCase):
             vtk_cell = data_set.GetCell(index)
             ids = vtk_cell.GetPointIds()
             for i, uid in enumerate(cell.points):
-                cell_point = cuds.get_point(uid)
+                cell_point = cuds.get(uid)
                 assert_array_equal(
                     data_set.GetPoint(ids.GetId(i)), cell_point.coordinates)
 
@@ -300,10 +303,10 @@ class TestCUDS2VTK(unittest.TestCase):
         self.assertEqual(data_set.GetNumberOfCells(), 0)
 
     def add_velocity(self, lattice):
-        nodes = [node for node in lattice.iter_nodes()]
+        nodes = [node for node in lattice.iter(item_type=CUBA.NODE)]
         for node in nodes:
             node.data[CUBA.VELOCITY] = node.index
-        lattice.update_nodes(nodes)
+        lattice.update(nodes)
 
     def test_with_invalid_cuds(self):
         # given
