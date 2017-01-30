@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 MAJOR = 0
 MINOR = 3
-MICRO = 0
+MICRO = 1
 
 IS_RELEASED = True
 
@@ -108,7 +108,7 @@ if __name__ == "__main__":
         author='SimPhoNy FP7 European Project',
         description='The paraview visualisation plugin for SimPhoNy',
         long_description=open('README.rst').read(),
-        install_requires=["simphony>0.4,<0.6"],
+        install_requires=["simphony>=0.5"],
         tests_requires=["hypothesis"],
         packages=find_packages(),
         entry_points={'simphony.visualisation': plugin},
